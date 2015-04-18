@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<aut:automator
+	xmlns:aut="http://dsg.ce.unipr.it/software/deus/schema/automator"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dsg.ce.unipr.it/software/deus/schema/automator automator.xsd ">
+
+
+	<!-- *** EVENTS *** -->
+
+	<aut:event id="nodeDeath" handler="it.unipr.ce.dsg.deus.impl.event.DeathEvent" oneShot="true" />
+	<!-- when scheduled, deletes a node -->
+
+	<aut:event id="nodeBirth" handler="it.unipr.ce.dsg.deus.impl.event.BirthEvent" schedulerListener="it.unipr.ce.dsg.deus.example.basic.BirthSchedulerListener"><!-- when scheduled, creates a new node -->
+		<aut:events>
+			<aut:reference id="nodeDeath" /><!-- event to be scheduled on created node -->
+		</aut:events>
+	</aut:event>
+
+	<aut:event id="logPopulationSize" handler="it.unipr.ce.dsg.deus.impl.event.LogPopulationSizeEvent" />
+
+	<!-- *** NODE SPECIES *** -->
+
+	<aut:node id="basicnode" handler="it.unipr.ce.dsg.deus.impl.node.BasicNode">
+	</aut:node>
+
+	<!-- *** PROCESSES *** -->
+
+	<!-- with 1/lambda = 50 and 1/lambda' = 20000, we have E[N] = 400 -->
+
+	<aut:process id="poissonA" handler="it.unipr.ce.dsg.deus.impl.process.PoissonProcess">
+		<aut:params>
+			<aut:param name="meanArrival" value="50" />
+		</aut:params>
+		<aut:nodes>
+			<aut:reference id="basicnode" /><!-- this is to associate the process to a specific type of nodes -->
+		</aut:nodes>
+		<aut:events>
+			<aut:reference id="nodeBirth" />
+		</aut:events>
+	</aut:process>
+
+	<aut:process id="poissonB" handler="it.unipr.ce.dsg.deus.impl.process.PoissonProcess">
+		<aut:params>
+			<aut:param name="meanArrival" value="20000" />
+		</aut:params>
+		<aut:nodes>
+			<aut:reference id="basicnode" />
+		</aut:nodes>
+		<aut:events>
+			<aut:reference id="nodeDeath" />
+		</aut:events>
+	</aut:process>
+
+	<aut:process id="periodic1" handler="it.unipr.ce.dsg.deus.impl.process.PeriodicProcess">
+		<aut:params>
+			<aut:param name="period" value="500" />
+		</aut:params>
+		<aut:events>
+			<aut:reference id="logPopulationSize" />
+		</aut:events>
+	</aut:process>
+
+	<!-- *** SIMULATION *** -->
+
+	<aut:engine maxvt="200000"
+		seed="123456789">
+		<aut:logger level="ALL" pathPrefix="log" />
+		<aut:processes>
+			<aut:reference id="poissonA" />
+			<aut:reference id="periodic1" />			
+		</aut:processes>
+	</aut:engine>
+
+</aut:automator>
