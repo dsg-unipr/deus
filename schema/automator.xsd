@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema
+	targetNamespace="http://dsg.ce.unipr.it/software/deus/schema/automator"
+	elementFormDefault="qualified" xmlns="http://www.w3.org/2001/XMLSchema"
+	xmlns:tns="http://dsg.ce.unipr.it/software/deus/schema/automator">
+
+	<complexType name="event">
+		<sequence>
+			<element name="logger" type="tns:logger" minOccurs="0"
+				maxOccurs="1" />
+			<element name="params" type="tns:params" minOccurs="0"
+				maxOccurs="1">
+			</element>
+			<element name="events" type="tns:references" minOccurs="0"
+				maxOccurs="1">
+			</element>
+		</sequence>
+		<attribute name="id" type="string" use="required"></attribute>
+		<attribute name="handler" type="string" use="required"></attribute>
+		<attribute name="schedulerListener" type="string" use="optional"></attribute>
+		<attribute name="oneShot" type="boolean" use="optional"></attribute>
+		<attribute name="distributionLevel" type="string" use="optional"></attribute>
+	</complexType>
+
+	<complexType name="node">
+		<sequence>
+			<element name="logger" type="tns:logger" minOccurs="0"
+				maxOccurs="1" />
+			<element name="params" type="tns:params" minOccurs="0"
+				maxOccurs="1">
+			</element>
+			<element name="resources" type="tns:resources" minOccurs="0"
+				maxOccurs="1">
+			</element>
+		</sequence>
+		<attribute name="id" type="string" use="required"></attribute>
+		<attribute name="handler" type="string" use="required"></attribute>
+	</complexType>
+
+	<complexType name="resources">
+		<sequence>
+			<element name="resource" type="tns:resource" maxOccurs="unbounded"
+				minOccurs="1">
+			</element>
+		</sequence>
+	</complexType>
+
+	<complexType name="resource">
+		<sequence>
+			<element name="params" type="tns:params" minOccurs="0"
+				maxOccurs="1">
+			</element>
+		</sequence>
+		<attribute name="handler" type="string" use="required"></attribute>
+	</complexType>
+
+	<complexType name="process">
+		<sequence>
+			<element name="logger" type="tns:logger" minOccurs="0"
+				maxOccurs="1" />
+			<element name="params" type="tns:params" minOccurs="0"
+				maxOccurs="1">
+			</element>
+			<element name="nodes" type="tns:references" minOccurs="0"
+				maxOccurs="1">
+			</element>
+			<element name="events" type="tns:references" minOccurs="1"
+				maxOccurs="1">
+			</element>
+		</sequence>
+		<attribute name="id" type="string" use="required"></attribute>
+		<attribute name="handler" type="string" use="required"></attribute>
+	</complexType>
+	
+	<complexType name="network">
+		<sequence>
+			<element name="nodes" type="tns:references" minOccurs="1"
+				maxOccurs="1">
+			</element>
+		</sequence>
+		<attribute name="id" type="string" use="required"></attribute>
+		<attribute name="handler" type="string" use="required"></attribute>
+	</complexType>
+
+	<complexType name="engine">
+		<sequence>
+			<element name="logger" type="tns:logger" minOccurs="0"
+				maxOccurs="1" />
+			<element name="processes" type="tns:references"
+				minOccurs="1" maxOccurs="1">
+			</element>
+		</sequence>
+		<attribute name="maxvt" type="float" use="required"></attribute>
+		<attribute name="seed" type="int" use="required"></attribute>
+		<attribute name="keyspacesize" type="int" use="optional"></attribute>
+		<attribute name="prng" type="string" use="optional"/>
+	</complexType>
+
+	<complexType name="params">
+		<sequence>
+			<element name="param" type="tns:param" maxOccurs="unbounded"
+				minOccurs="1">
+			</element>
+		</sequence>
+	</complexType>
+
+	<complexType name="param">
+		<attribute name="name" type="string" use="required"></attribute>
+		<attribute name="value" type="string" use="required"></attribute>
+	</complexType>
+
+	<complexType name="references">
+		<sequence>
+			<element name="reference" type="tns:reference"
+				maxOccurs="unbounded" minOccurs="1">
+				<keyref name="entityKeyRef" refer="tns:entityKey">
+					<selector xpath=".//tns:*/*" />
+					<field xpath="@id" />
+				</keyref>
+				<key name="entityKey">
+					<selector xpath=".//tns:*" />
+					<field xpath="@id" />
+				</key>
+			</element>
+		</sequence>
+	</complexType>
+
+	<complexType name="reference">
+		<attribute name="id" type="string" use="required"></attribute>
+		<attribute name="number" type="int"></attribute>
+	</complexType>
+
+	<complexType name="logger">
+		<attribute name="level" use="required">
+			<simpleType>
+				<restriction base="string">
+					<enumeration value="OFF" />
+					<enumeration value="SEVERE" />
+					<enumeration value="WARNING" />
+					<enumeration value="INFO" />
+					<enumeration value="CONFIG" />
+					<enumeration value="FINE" />
+					<enumeration value="FINER" />
+					<enumeration value="FINEST" />
+					<enumeration value="ALL" />
+				</restriction>
+			</simpleType>
+		</attribute>
+		<attribute name="pathPrefix" type="string" use="optional" />
+	</complexType>
+
+	<complexType name="automator">
+		<sequence>
+			<element name="event" type="tns:event" minOccurs="0"
+				maxOccurs="unbounded">
+			</element>
+			<element name="node" type="tns:node" minOccurs="0"
+				maxOccurs="unbounded">
+			</element>
+			<element name="process" type="tns:process" minOccurs="0"
+				maxOccurs="unbounded">
+			</element>
+			<element name="network" type="tns:network" minOccurs="0"
+				maxOccurs="1">
+			</element>
+			<element name="engine" type="tns:engine" minOccurs="1"
+				maxOccurs="1">
+			</element>
+		</sequence>
+	</complexType>
+
+	<!--  da fare, rendere gli ID univoci in tutto il file -->
+	<element name="automator" type="tns:automator">
+		<keyref name="eventKeyRef" refer="tns:eventKey">
+			<selector xpath=".//tns:events/*" />
+			<field xpath="@id" />
+		</keyref>
+		<key name="eventKey">
+			<selector xpath=".//tns:event" />
+			<field xpath="@id" />
+		</key>
+		<keyref name="nodeKeyRef" refer="tns:nodeKey">
+			<selector xpath=".//tns:nodes/*" />
+			<field xpath="@id" />
+		</keyref>
+		<key name="nodeKey">
+			<selector xpath=".//tns:node" />
+			<field xpath="@id" />
+		</key>
+		<keyref name="processKeyRef" refer="tns:processKey">
+			<selector xpath=".//tns:processes/*" />
+			<field xpath="@id" />
+		</keyref>
+		<key name="processKey">
+			<selector xpath=".//tns:process" />
+			<field xpath="@id" />
+		</key>
+	</element>
+</schema>

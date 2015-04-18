@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema	
+	targetNamespace="http://dsg.ce.unipr.it/software/deus/schema/deusAutomator"
+	elementFormDefault="qualified" xmlns="http://www.w3.org/2001/XMLSchema"
+	xmlns:tns="http://dsg.ce.unipr.it/software/deus/schema/deusAutomator">
+
+	<complexType name="deusAutomator">
+		<sequence>
+			<element name="simulation" type="tns:simulation" minOccurs="1"
+				maxOccurs="unbounded">
+			</element>			
+		</sequence>		
+	</complexType>
+
+	<complexType name="simulation">
+		<sequence>
+			<element name="node" type="tns:node" minOccurs="0"
+				maxOccurs="unbounded">
+			</element>
+			<element name="process" type="tns:process" minOccurs="0"
+				maxOccurs="unbounded">
+			</element>
+			<element name="engine" type="tns:engine" minOccurs="0"
+				maxOccurs="1">
+			</element>
+			<element name="resultVT" type="tns:resultVT" minOccurs="0"
+				maxOccurs="1">
+			</element>
+			<element name="resultXYFile" type="tns:resultXYFile" minOccurs="0"
+				maxOccurs="unbounded">
+			</element>
+		</sequence>
+		<attribute name="simulationNumberSeed" type="integer" use="required"></attribute>		
+		<attribute name="simulationName" type="string" use="required"></attribute>	
+		<attribute name="resultFolder" type="string" use="optional"></attribute>
+		<attribute name="inputFolder" type="string" use="optional"></attribute>	
+	</complexType>
+
+	<complexType name="node">
+		<sequence>
+			<element name="paramName" type="tns:paramName" minOccurs="0"
+				maxOccurs="unbounded">
+			</element>
+			<element name="resourceParamName" type="tns:resourceParamName" minOccurs="0"
+				maxOccurs="unbounded">
+			</element>
+		</sequence>
+		<attribute name="id" type="string" use="required"></attribute>		
+	</complexType>
+
+
+	<complexType name="process">
+		<sequence>
+			<element name="paramName" type="tns:paramName" minOccurs="0"
+				maxOccurs="unbounded">
+			</element>									
+		</sequence>
+		<attribute name="id" type="string" use="required"></attribute>
+	</complexType>
+
+	<complexType name="engine">
+		<sequence>			
+			<element name="seed" type="tns:seed" minOccurs="0" 
+				maxOccurs="1">
+			</element>
+		</sequence>
+		<attribute name="startVT" type="float" use="optional"></attribute>
+		<attribute name="endVT" type="float" use="optional"></attribute>
+		<attribute name="stepVT" type="float" use="optional"></attribute>
+	</complexType>
+	
+	<complexType name="resultVT">
+		<attribute name="outputLogFile" type="string" use="required"></attribute>		
+	</complexType>
+	
+	<complexType name="resultXYFile">
+		<attribute name="fileName" type="string" use="required"></attribute>
+		<attribute name="axisX" type="string" use="required"></attribute>
+		<attribute name="axisY" type="string" use="required"></attribute>
+	</complexType>
+
+	<complexType name="paramName">
+		<sequence>
+			<element name="initialValue" type="float" maxOccurs="1"
+				minOccurs="1">
+			</element>
+			<element name="finalValue" type="float" maxOccurs="1"
+				minOccurs="1">
+			</element>
+			<element name="stepValue" type="float" maxOccurs="1"
+				minOccurs="1">
+			</element>
+		</sequence>
+		<attribute name="name" type="string" use="required"></attribute>
+	</complexType>
+
+	<complexType name="resourceParamName">
+		<sequence>
+			<element name="initialValue" type="float" maxOccurs="1"
+				minOccurs="1">
+			</element>
+			<element name="finalValue" type="float" maxOccurs="1"
+				minOccurs="1">
+			</element>
+			<element name="stepValue" type="float" maxOccurs="1"
+				minOccurs="1">
+			</element>
+		</sequence>
+		<attribute name="handlerName" type="string" use="required"></attribute>
+		<attribute name="resParamValue" type="string" use="required"></attribute>
+	</complexType>
+
+	<complexType name="seed">
+		<sequence>
+			<element name="seedValue" type="integer" minOccurs="0"
+				maxOccurs="unbounded">
+			</element>			
+		</sequence>		
+	</complexType>			
+	
+	<element name="deusAutomator" type="tns:deusAutomator">	
+	</element>
+	
+</schema>	

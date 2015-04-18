@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><aut:automator xmlns:aut="http://dsg.ce.unipr.it/software/deus/schema/automator" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://dsg.ce.unipr.it/software/deus/schema/automator ../../schema/automator.xsd ">
+
+
+	<!-- *** EVENTS *** -->
+
+	<aut:event handler="it.unipr.ce.dsg.deus.impl.event.BirthEvent" id="cloudbirth" oneShot="true"/>
+
+	<aut:event handler="it.unipr.ce.dsg.deus.impl.event.BirthEvent" id="peerbirth" schedulerListener="it.unipr.ce.dsg.deus.example.p2pcloud.P2PCloudPeerBirthSchedulerListener">
+	</aut:event>
+
+	<aut:event handler="it.unipr.ce.dsg.deus.example.p2pcloud.BATopologyBuilderEvent" id="peerconnection" oneShot="true">
+		<aut:params>
+			<aut:param name="n0" value="18"/>
+			<aut:param name="m" value="10"/>  <!-- alpha parameter, less than n0 always -->
+		</aut:params>
+	</aut:event>
+	
+	<aut:event handler="it.unipr.ce.dsg.deus.example.p2pcloud.ComputeInitialReputationAndResponseTimeEvent" id="computeInitialReputationAndResponseTime" oneShot="true">
+	    <aut:params>
+			<aut:param name="rho" value="20"/> <!-- rho must be set also in stateChange event -->
+		</aut:params>
+	</aut:event>
+	
+	<aut:event handler="it.unipr.ce.dsg.deus.example.p2pcloud.StateChangeEvent" id="stateChange" oneShot="true">
+	    <aut:params>
+			<aut:param name="rho" value="20"/> <!-- rho must be set also in computeInitialReputationAndResponseTime event -->
+		</aut:params>
+	</aut:event>
+	
+ 	<aut:event handler="it.unipr.ce.dsg.deus.example.p2pcloud.FilePublicationEvent" id="publication">
+ 		<aut:params>
+			<aut:param name="maintenancePeriod" value="1800"/> <!-- T parameter -->
+		</aut:params>
+	</aut:event>	
+ 	
+ 	<aut:event handler="it.unipr.ce.dsg.deus.example.p2pcloud.FileMaintenanceEvent" id="maintenance"/>
+ 	
+ 	<aut:event handler="it.unipr.ce.dsg.deus.example.p2pcloud.FileRetrievalEvent" id="retrieval"/>
+	
+	<aut:event handler="it.unipr.ce.dsg.deus.example.p2pcloud.LogP2PCloudStatsEvent" id="logStats"/>
+	
+	<!-- *** NODE SPECIES *** -->
+
+	<aut:node handler="it.unipr.ce.dsg.deus.example.p2pcloud.Cloud" id="cloud">
+	    <aut:params>
+			<aut:param name="priceForPutOperation" value="0.00001"/> <!-- 0.01$ per 1000 operations -->
+			<aut:param name="priceForGetOperation" value="0.000001"/> <!-- 0.01$ per 10000 operations -->
+			<aut:param name="cloudAvgResponseTime" value="20"/> <!-- lambda is about 1 seconds: 1 / (3 / 60) -->
+		</aut:params>
+	</aut:node>
+	
+	<aut:node handler="it.unipr.ce.dsg.deus.example.p2pcloud.StoragePeer" id="storagePeer">
+	    <aut:params>
+			<aut:param name="useCloud" value="true"/> <!-- set to true if the cloud can be used for storage -->
+			<aut:param name="usePeers" value="true"/> <!-- set to true if peers can be used for storage -->
+			<aut:param name="nThreshold" value="45"/>
+			<aut:param name="rThreshold" value="0.72"/>
+			<aut:param name="mThreshold" value="4"/>
+			<aut:param name="adaptive" value="true"/> <!-- Set to true to adapt m_t; if false, set mThreshold param -->
+			<aut:param name="peerAvgResponseTime" value="60"/> <!-- lambda is about 3 second: 1 / (1 / 60) -->
+			<aut:param name="heuristic" value="false"/>
+			<aut:param name="cMaxPerPut" value="0.000008"/> <!-- Max price a peer can afford to store a chunk on the cloud (must be < priceForPutOperation) -->
+		</aut:params>
+	</aut:node>
+
+
+	<!-- *** PROCESSES *** -->
+
+	<!-- with 1/lambda = 1000 and 1/lambda' = 1000000, we have E[N] = lambda/lambda' = 1000 -->
+
+	<aut:process handler="it.unipr.ce.dsg.deus.impl.process.PeriodicProcess" id="periodic0">
+		<aut:params>
+			<aut:param name="period" value="2"/>
+		</aut:params>
+		<aut:nodes>
+			<aut:reference id="cloud"/>
+		</aut:nodes>
+		<aut:events>
+			<aut:reference id="cloudbirth"/>
+		</aut:events>
+	</aut:process>
+	
+	<aut:process handler="it.unipr.ce.dsg.deus.impl.process.RectangularPulsePeriodicProcess" id="rectpulseperiodic1">
+		<aut:params>
+			<aut:param name="period" value="1"/>
+			<aut:param name="startVtThreshold" value="10"/>
+			<aut:param name="stopVtThreshold" value="1011"/>
+		</aut:params>
+		<aut:nodes>
+			<aut:reference id="storagePeer"/>
+		</aut:nodes>
+		<aut:events>
+			<aut:reference id="peerbirth"/>
+		</aut:events>
+	</aut:process>
+	
+	<aut:process handler="it.unipr.ce.dsg.deus.impl.process.PeriodicProcess" id="periodic1">
+		<aut:params>
+			<aut:param name="period" value="1015"/>
+		</aut:params>
+		<aut:nodes>
+			<aut:reference id="storagePeer"/>
+		</aut:nodes>
+		<aut:events>
+			<aut:reference id="peerconnection"/>
+		</aut:events>
+	</aut:process>
+	
+	<aut:process handler="it.unipr.ce.dsg.deus.impl.process.PeriodicProcess" id="periodic2">
+		<aut:params>
+			<aut:param name="period" value="1050"/>
+		</aut:params>
+		<aut:nodes>
+			<aut:reference id="storagePeer"/>
+		</aut:nodes>
+		<aut:events>
+			<aut:reference id="computeInitialReputationAndResponseTime"/>
+		</aut:events>
+	</aut:process>
+	
+	<aut:process handler="it.unipr.ce.dsg.deus.impl.process.RectangularPulsePoissonProcess" id="rectpulsepoisson1">
+		<aut:params>
+			<aut:param name="meanArrival" value="10"/>
+			<aut:param name="startVtThreshold" value="1200"/>
+			<aut:param name="stopVtThreshold" value="864000"/>
+		</aut:params>
+		<aut:nodes>
+			<aut:reference id="storagePeer"/>
+		</aut:nodes>
+		<aut:events>
+			<aut:reference id="publication"/>
+		</aut:events>
+	</aut:process>
+	
+	<aut:process handler="it.unipr.ce.dsg.deus.impl.process.RectangularPulsePoissonProcess" id="rectpulsepoisson2">
+		<aut:params>
+			<aut:param name="meanArrival" value="10"/>
+			<aut:param name="startVtThreshold" value="1400"/>
+			<aut:param name="stopVtThreshold" value="864000"/>
+		</aut:params>
+		<aut:nodes>
+			<aut:reference id="storagePeer"/>
+		</aut:nodes>
+		<aut:events>
+			<aut:reference id="retrieval"/>
+		</aut:events>
+	</aut:process>
+	
+	<aut:process handler="it.unipr.ce.dsg.deus.impl.process.PeriodicProcess" id="periodic3">
+		<aut:params>
+			<aut:param name="period" value="1000"/>
+		</aut:params>
+		<aut:events>
+			<aut:reference id="logStats"/>  
+		</aut:events>
+	</aut:process>
+	
+
+	<!-- *** SIMULATION *** -->
+
+	<aut:engine maxvt="864000" seed="123456789"> <!-- 10 days: 86400 * 10 -->
+		<aut:logger level="INFO"/>
+		<aut:processes>
+			<aut:reference id="periodic0"/>
+			<aut:reference id="rectpulseperiodic1"/>
+			<aut:reference id="periodic1"/>
+			<aut:reference id="periodic2"/>
+			<aut:reference id="rectpulsepoisson1"/>
+			<aut:reference id="rectpulsepoisson2"/>
+			<aut:reference id="periodic3"/>
+		</aut:processes>
+	</aut:engine>
+
+</aut:automator>
