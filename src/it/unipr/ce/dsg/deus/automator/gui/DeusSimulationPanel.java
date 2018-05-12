@@ -1,5 +1,9 @@
 package it.unipr.ce.dsg.deus.automator.gui;
 
+import org.jdesktop.layout.GroupLayout;
+import org.jdesktop.layout.LayoutStyle;
+
+import javax.swing.*;
 import java.net.InetAddress;
 import java.util.ArrayList;
 
@@ -24,6 +28,10 @@ public class DeusSimulationPanel extends javax.swing.JPanel {
 	private GnuPlotFileTableModel gnuPlotFileTableModel;
 	private ArrayList<GnuPlotFileElement> gnuPlotFileList;
 
+	/* @author Mirco Rosa (mirco.rosa.91@gmail.com) [Event Parametrization] */
+	private EventParameterTableModel eventParameterTableModel;
+	private ArrayList<EventParameter> eventParameterList;
+
 	/** Creates new form DeusSimulationPanel */
 	public DeusSimulationPanel(javax.swing.JTabbedPane simulationTabbedPane) {
 		this.simulationTabbedPane = simulationTabbedPane;
@@ -44,12 +52,14 @@ public class DeusSimulationPanel extends javax.swing.JPanel {
 		processParameterTableModel = new ProcessParameterTableModel();
 		engineParameterTableModel = new EngineParameterTableModel();
 		gnuPlotFileTableModel = new GnuPlotFileTableModel();
+		eventParameterTableModel = new EventParameterTableModel();
 
 		nodeParameterList = new ArrayList<NodeParameter>();
 		nodeResourceList = new ArrayList<NodeResource>();
 		processParameterList = new ArrayList<ProcessParameter>();
 		engineParameterList = new ArrayList<EngineParameter>();
 		gnuPlotFileList = new ArrayList<GnuPlotFileElement>();
+		eventParameterList = new ArrayList<>();
 
 		nodeParameterLabel = new javax.swing.JLabel();
 		nodeResourceScrollPane = new javax.swing.JScrollPane();
@@ -57,7 +67,7 @@ public class DeusSimulationPanel extends javax.swing.JPanel {
 		nodeResourceLabel = new javax.swing.JLabel();
 		nodeParameterScrollPane = new javax.swing.JScrollPane();
 		nodeParameterTable = new javax.swing.JTable();
-		simulationNameLabel = new javax.swing.JLabel();
+//		simulationNameLabel = new javax.swing.JLabel();
 		simulationNameField = new javax.swing.JTextField();
 		setSimulationNameButton = new javax.swing.JButton();
 		processScrollPane = new javax.swing.JScrollPane();
@@ -80,7 +90,21 @@ public class DeusSimulationPanel extends javax.swing.JPanel {
 		removeGnuPlotLabel = new javax.swing.JLabel();
 		addGnuPlotLabel = new javax.swing.JLabel();
 
-		nodeParameterLabel.setText("Node Parameter");
+		/* @author Mirco Rosa (mirco.rosa.91@gmail.com) [Event Parametrization] */
+		parametersLabel = new javax.swing.JLabel();
+		addEventLabel = new javax.swing.JLabel();
+		removeEventLabel = new javax.swing.JLabel();
+		eventLabel = new javax.swing.JLabel();
+		eventScrollPane = new javax.swing.JScrollPane();
+		eventTable = new javax.swing.JTable();
+
+		hseparator = new JSeparator(SwingConstants.HORIZONTAL);
+
+		parametersLabel.setText("Parameters");
+		parametersLabel.setFont(parametersLabel.getFont().deriveFont((float)16));
+		parametersLabel.setHorizontalAlignment(SwingConstants.CENTER);
+
+		nodeParameterLabel.setText("Node");
 
 		nodeParameterTableModel.set_FileTableModel(nodeParameterList);
 
@@ -93,11 +117,14 @@ public class DeusSimulationPanel extends javax.swing.JPanel {
 		nodeResourceTable.setModel(nodeResourceTableModel);
 		nodeResourceScrollPane.setViewportView(nodeResourceTable);
 
-		simulationNameLabel.setText("Simulation Name");
+//		simulationNameLabel.setText("Simulation Name");
+//		simulationNameLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
 		simulationNameField.setText("Simulation Name");
+		simulationNameField.setFont(simulationNameField.getFont().deriveFont((float)20));
+		simulationNameField.setHorizontalAlignment(SwingConstants.CENTER);
 
-		setSimulationNameButton.setText("Set");
+		setSimulationNameButton.setText("Set Name");
 		setSimulationNameButton
 				.addActionListener(new java.awt.event.ActionListener() {
 					public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -110,7 +137,7 @@ public class DeusSimulationPanel extends javax.swing.JPanel {
 		processTable.setModel(processParameterTableModel);
 		processScrollPane.setViewportView(processTable);
 
-		engineLabel.setText("Engine");
+		engineLabel.setText("Engine Seeds");
 		engineParameterTableModel.set_FileTableModel(engineParameterList);
 		engineTable.setModel(engineParameterTableModel);
 		engineScrollPane.setViewportView(engineTable);
@@ -118,6 +145,11 @@ public class DeusSimulationPanel extends javax.swing.JPanel {
 		gnuPlotFileTableModel.set_FileTableModel(gnuPlotFileList);
 		gnuPlotFileTable.setModel(gnuPlotFileTableModel);
 		gnuPlotFileScrollPane.setViewportView(gnuPlotFileTable);
+
+		eventLabel.setText("Event");
+		eventParameterTableModel.set_FileTableModel(eventParameterList);
+		eventTable.setModel(eventParameterTableModel);
+		eventScrollPane.setViewportView(eventTable);
 
 		removeNodeParameterLabel.setIcon(new javax.swing.ImageIcon(
 				("res/remove.png"))); // NOI18N
@@ -183,6 +215,40 @@ public class DeusSimulationPanel extends javax.swing.JPanel {
 				addProcessLabelMouseClicked(evt);
 			}
 		});
+
+		/* @author Mirco Rosa (mirco.rosa.91@gmail.com) [Event Parametrization] */
+		removeEventLabel
+				.setIcon(new javax.swing.ImageIcon(("res/remove.png"))); // NOI18N
+		removeEventLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+			public void mousePressed(java.awt.event.MouseEvent evt) {
+				removeEventLabelMousePressed(evt);
+			}
+
+			public void mouseReleased(java.awt.event.MouseEvent evt) {
+				removeEventLabelMouseReleased(evt);
+			}
+
+			public void mouseClicked(java.awt.event.MouseEvent evt) {
+				removeEventLabelMouseClicked(evt);
+			}
+		});
+
+		addEventLabel.setIcon(new javax.swing.ImageIcon(("res/add.png"))); // NOI18N
+		addEventLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+			public void mousePressed(java.awt.event.MouseEvent evt) {
+				addEventLabelMousePressed(evt);
+			}
+
+			public void mouseReleased(java.awt.event.MouseEvent evt) {
+				addEventLabelMouseReleased(evt);
+			}
+
+			public void mouseClicked(java.awt.event.MouseEvent evt) {
+				addEventLabelMouseClicked(evt);
+			}
+		});
+		///////////////////////////////////////////////////
+
 
 		removeNodeResourceLabel.setIcon(new javax.swing.ImageIcon(
 				("res/remove.png"))); // NOI18N
@@ -282,179 +348,297 @@ public class DeusSimulationPanel extends javax.swing.JPanel {
 			}
 		});
 
+
+
 		org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(
 				this);
 		this.setLayout(layout);
-		layout.setHorizontalGroup(layout
-				.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-				.add(layout
-						.createSequentialGroup()
-						.addContainerGap()
-						.add(layout
-								.createParallelGroup(
-										org.jdesktop.layout.GroupLayout.LEADING)
-								.add(layout
-										.createSequentialGroup()
-										.add(layout
-												.createParallelGroup(
-														org.jdesktop.layout.GroupLayout.LEADING)
-												.add(layout
-														.createSequentialGroup()
-														.add(addNodeParameterLabel)
-														.addPreferredGap(
-																org.jdesktop.layout.LayoutStyle.RELATED)
-														.add(removeNodeParameterLabel)
-														.addPreferredGap(
-																org.jdesktop.layout.LayoutStyle.RELATED)
-														.add(nodeParameterLabel))
-												.add(nodeParameterScrollPane,
-														org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
-														org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
-														org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-										.addPreferredGap(
-												org.jdesktop.layout.LayoutStyle.RELATED)
-										.add(layout
-												.createParallelGroup(
-														org.jdesktop.layout.GroupLayout.LEADING)
-												.add(layout
-														.createSequentialGroup()
-														.add(addNodeResourceLabel)
-														.addPreferredGap(
-																org.jdesktop.layout.LayoutStyle.RELATED)
-														.add(removeNodeResourceLabel)
-														.addPreferredGap(
-																org.jdesktop.layout.LayoutStyle.UNRELATED)
-														.add(nodeResourceLabel))
-												.add(nodeResourceScrollPane,
-														org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
-														454, Short.MAX_VALUE)))
-								.add(layout
-										.createSequentialGroup()
-										.add(gnuPlotFileScrollPane,
-												org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
-												org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
-												org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-										.add(8, 8, 8)
-										.add(simulationNameField,
-												org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
-												241,
-												org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-										.addPreferredGap(
-												org.jdesktop.layout.LayoutStyle.RELATED)
-										.add(setSimulationNameButton))
-								.add(layout
-										.createSequentialGroup()
-										.add(layout
-												.createParallelGroup(
-														org.jdesktop.layout.GroupLayout.LEADING)
-												.add(processScrollPane,
-														org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
-														org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
-														org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-												.add(layout
-														.createSequentialGroup()
-														.add(addProcessLabel)
-														.addPreferredGap(
-																org.jdesktop.layout.LayoutStyle.RELATED)
-														.add(removeProcessLabel)
-														.addPreferredGap(
-																org.jdesktop.layout.LayoutStyle.RELATED)
-														.add(processLabel))
-												.add(layout
-														.createSequentialGroup()
-														.add(addGnuPlotLabel)
-														.addPreferredGap(
-																org.jdesktop.layout.LayoutStyle.RELATED)
-														.add(removeGnuPlotLabel)
-														.addPreferredGap(
-																org.jdesktop.layout.LayoutStyle.UNRELATED)
-														.add(gnuPlotLabel)))
-										.addPreferredGap(
-												org.jdesktop.layout.LayoutStyle.RELATED)
-										.add(layout
-												.createParallelGroup(
-														org.jdesktop.layout.GroupLayout.LEADING)
-												.add(simulationNameLabel)
-												.add(layout
-														.createSequentialGroup()
-														.add(addEngineLabel)
-														.addPreferredGap(
-																org.jdesktop.layout.LayoutStyle.RELATED)
-														.add(removeEngineLabel)
-														.addPreferredGap(
-																org.jdesktop.layout.LayoutStyle.UNRELATED)
-														.add(engineLabel))
-												.add(engineScrollPane,
-														org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
-														454, Short.MAX_VALUE))))
-						.addContainerGap()));
-		layout.setVerticalGroup(layout
-				.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-				.add(layout
-						.createSequentialGroup()
-						.add(30, 30, 30)
-						.add(layout
-								.createParallelGroup(
-										org.jdesktop.layout.GroupLayout.BASELINE)
-								.add(nodeParameterLabel)
-								.add(addNodeParameterLabel)
-								.add(removeNodeParameterLabel)
-								.add(addNodeResourceLabel)
-								.add(removeNodeResourceLabel)
-								.add(nodeResourceLabel))
-						.add(8, 8, 8)
-						.add(layout
-								.createParallelGroup(
-										org.jdesktop.layout.GroupLayout.LEADING,
-										false)
-								.add(nodeResourceScrollPane, 0, 0,
-										Short.MAX_VALUE)
-								.add(nodeParameterScrollPane,
-										org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
-										106, Short.MAX_VALUE))
-						.addPreferredGap(
-								org.jdesktop.layout.LayoutStyle.RELATED)
-						.add(layout
-								.createParallelGroup(
-										org.jdesktop.layout.GroupLayout.BASELINE)
-								.add(addProcessLabel).add(removeProcessLabel)
-								.add(processLabel).add(addEngineLabel)
-								.add(removeEngineLabel).add(engineLabel))
-						.add(8, 8, 8)
-						.add(layout
-								.createParallelGroup(
-										org.jdesktop.layout.GroupLayout.LEADING,
-										false)
-								.add(engineScrollPane, 0, 0, Short.MAX_VALUE)
-								.add(processScrollPane,
-										org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
-										106,
-										org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-						.addPreferredGap(
-								org.jdesktop.layout.LayoutStyle.UNRELATED)
-						.add(layout
-								.createParallelGroup(
-										org.jdesktop.layout.GroupLayout.BASELINE)
-								.add(addGnuPlotLabel).add(removeGnuPlotLabel)
-								.add(gnuPlotLabel).add(simulationNameLabel))
-						.addPreferredGap(
-								org.jdesktop.layout.LayoutStyle.RELATED)
-						.add(layout
-								.createParallelGroup(
-										org.jdesktop.layout.GroupLayout.LEADING)
-								.add(gnuPlotFileScrollPane,
-										org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
-										106,
-										org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-								.add(layout
-										.createParallelGroup(
-												org.jdesktop.layout.GroupLayout.BASELINE)
-										.add(simulationNameField,
-												org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
-												org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
-												org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-										.add(setSimulationNameButton)))
-						.addContainerGap()));
+//		layout.setHorizontalGroup(layout
+//				.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+//				.add(layout
+//						.createSequentialGroup()
+//						.addContainerGap()
+//						.add(layout
+//								.createParallelGroup(
+//										org.jdesktop.layout.GroupLayout.LEADING)
+//								.add(layout
+//										.createSequentialGroup()
+//										.add(layout
+//												.createParallelGroup(
+//														org.jdesktop.layout.GroupLayout.LEADING)
+//												.add(layout
+//														.createSequentialGroup()
+//														.add(addNodeParameterLabel)
+//														.addPreferredGap(
+//																org.jdesktop.layout.LayoutStyle.RELATED)
+//														.add(removeNodeParameterLabel)
+//														.addPreferredGap(
+//																org.jdesktop.layout.LayoutStyle.RELATED)
+//														.add(nodeParameterLabel))
+//												.add(nodeParameterScrollPane,
+//														org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
+//														org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
+//														org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+//										.addPreferredGap(
+//												org.jdesktop.layout.LayoutStyle.RELATED)
+//										.add(layout
+//												.createParallelGroup(
+//														org.jdesktop.layout.GroupLayout.LEADING)
+//												.add(layout
+//														.createSequentialGroup()
+//														.add(addNodeResourceLabel)
+//														.addPreferredGap(
+//																org.jdesktop.layout.LayoutStyle.RELATED)
+//														.add(removeNodeResourceLabel)
+//														.addPreferredGap(
+//																org.jdesktop.layout.LayoutStyle.UNRELATED)
+//														.add(nodeResourceLabel))
+//												.add(nodeResourceScrollPane,
+//														org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
+//														454, Short.MAX_VALUE)))
+//								.add(layout
+//										.createSequentialGroup()
+//										.add(gnuPlotFileScrollPane,
+//												org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
+//												org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
+//												org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+//										.add(8, 8, 8)
+//										.add(simulationNameField,
+//												org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
+//												241,
+//												org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+//										.addPreferredGap(
+//												org.jdesktop.layout.LayoutStyle.RELATED)
+//										.add(setSimulationNameButton))
+//								.add(layout
+//										.createSequentialGroup()
+//										.add(layout
+//												.createParallelGroup(
+//														org.jdesktop.layout.GroupLayout.LEADING)
+//												.add(processScrollPane,
+//														org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
+//														org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
+//														org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+//												.add(layout
+//														.createSequentialGroup()
+//														.add(addProcessLabel)
+//														.addPreferredGap(
+//																org.jdesktop.layout.LayoutStyle.RELATED)
+//														.add(removeProcessLabel)
+//														.addPreferredGap(
+//																org.jdesktop.layout.LayoutStyle.RELATED)
+//														.add(processLabel))
+//												.add(layout
+//														.createSequentialGroup()
+//														.add(addGnuPlotLabel)
+//														.addPreferredGap(
+//																org.jdesktop.layout.LayoutStyle.RELATED)
+//														.add(removeGnuPlotLabel)
+//														.addPreferredGap(
+//																org.jdesktop.layout.LayoutStyle.UNRELATED)
+//														.add(gnuPlotLabel)))
+//										.addPreferredGap(
+//												org.jdesktop.layout.LayoutStyle.RELATED)
+//										.add(layout
+//												.createParallelGroup(
+//														org.jdesktop.layout.GroupLayout.LEADING)
+//												.add(simulationNameLabel)
+//												.add(layout
+//														.createSequentialGroup()
+//														.add(addEngineLabel)
+//														.addPreferredGap(
+//																org.jdesktop.layout.LayoutStyle.RELATED)
+//														.add(removeEngineLabel)
+//														.addPreferredGap(
+//																org.jdesktop.layout.LayoutStyle.UNRELATED)
+//														.add(engineLabel))
+//												.add(engineScrollPane,
+//														org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
+//														454, Short.MAX_VALUE))))
+//						.addContainerGap()));
+//		layout.setVerticalGroup(layout
+//				.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+//				.add(layout
+//						.createSequentialGroup()
+//						.add(30, 30, 30)
+//						.add(layout
+//								.createParallelGroup(
+//										org.jdesktop.layout.GroupLayout.BASELINE)
+//								.add(nodeParameterLabel)
+//								.add(addNodeParameterLabel)
+//								.add(removeNodeParameterLabel)
+//								.add(addNodeResourceLabel)
+//								.add(removeNodeResourceLabel)
+//								.add(nodeResourceLabel))
+//						.add(8, 8, 8)
+//						.add(layout
+//								.createParallelGroup(
+//										org.jdesktop.layout.GroupLayout.LEADING,
+//										false)
+//								.add(nodeResourceScrollPane, 0, 0,
+//										Short.MAX_VALUE)
+//								.add(nodeParameterScrollPane,
+//										org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
+//										106, Short.MAX_VALUE))
+//						.addPreferredGap(
+//								org.jdesktop.layout.LayoutStyle.RELATED)
+//						.add(layout
+//								.createParallelGroup(
+//										org.jdesktop.layout.GroupLayout.BASELINE)
+//								.add(addProcessLabel).add(removeProcessLabel)
+//								.add(processLabel).add(addEngineLabel)
+//								.add(removeEngineLabel).add(engineLabel))
+//						.add(8, 8, 8)
+//						.add(layout
+//								.createParallelGroup(
+//										org.jdesktop.layout.GroupLayout.LEADING,
+//										false)
+//								.add(engineScrollPane, 0, 0, Short.MAX_VALUE)
+//								.add(processScrollPane,
+//										org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
+//										106,
+//										org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+//						.addPreferredGap(
+//								org.jdesktop.layout.LayoutStyle.UNRELATED)
+//						.add(layout
+//								.createParallelGroup(
+//										org.jdesktop.layout.GroupLayout.BASELINE)
+//								.add(addGnuPlotLabel).add(removeGnuPlotLabel)
+//								.add(gnuPlotLabel).add(simulationNameLabel))
+//						.addPreferredGap(
+//								org.jdesktop.layout.LayoutStyle.RELATED)
+//						.add(layout
+//								.createParallelGroup(
+//										org.jdesktop.layout.GroupLayout.LEADING)
+//								.add(gnuPlotFileScrollPane,
+//										org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
+//										106,
+//										org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+//								.add(layout
+//										.createParallelGroup(
+//												org.jdesktop.layout.GroupLayout.BASELINE)
+//										.add(simulationNameField,
+//												org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
+//												org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
+//												org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+//										.add(setSimulationNameButton)))
+//						.addContainerGap()));
+
+
+		//New Frame UI
+		layout.setAutocreateGaps(true);
+		layout.setAutocreateContainerGaps(true);
+		layout.setHorizontalGroup(
+				layout.createSequentialGroup()
+						.add(layout.createParallelGroup(GroupLayout.LEADING,false)
+//								.add(simulationNameLabel,0,GroupLayout.PREFERRED_SIZE,Short.MAX_VALUE)
+								.add(simulationNameField,0,GroupLayout.PREFERRED_SIZE,320)
+								.add(setSimulationNameButton,0,GroupLayout.PREFERRED_SIZE,320)
+								.add(hseparator,0,GroupLayout.PREFERRED_SIZE,320)
+								.add(layout.createSequentialGroup()
+										.add(engineLabel)
+										.addPreferredGap(LayoutStyle.RELATED,GroupLayout.DEFAULT_SIZE,Short.MAX_VALUE)
+										.add(addEngineLabel)
+										.add(removeEngineLabel)
+								)
+								.add(engineScrollPane,0,GroupLayout.PREFERRED_SIZE,320)
+								.add(layout.createSequentialGroup()
+										.add(gnuPlotLabel)
+										.addPreferredGap(LayoutStyle.RELATED,GroupLayout.DEFAULT_SIZE,Short.MAX_VALUE)
+										.add(addGnuPlotLabel)
+										.add(removeGnuPlotLabel)
+								)
+								.add(gnuPlotFileScrollPane,0,GroupLayout.PREFERRED_SIZE,320)
+						)
+						.add(layout.createParallelGroup()
+								.add(parametersLabel,0,GroupLayout.PREFERRED_SIZE,Short.MAX_VALUE)
+								.add(layout.createSequentialGroup()
+										.add(nodeParameterLabel)
+										.addPreferredGap(LayoutStyle.RELATED,GroupLayout.DEFAULT_SIZE,Short.MAX_VALUE)
+										.add(addNodeParameterLabel)
+										.add(removeNodeParameterLabel)
+								)
+								.add(nodeParameterScrollPane)
+								.add(layout.createSequentialGroup()
+										.add(nodeResourceLabel)
+										.addPreferredGap(LayoutStyle.RELATED,GroupLayout.DEFAULT_SIZE,Short.MAX_VALUE)
+										.add(addNodeResourceLabel)
+										.add(removeNodeResourceLabel)
+								)
+								.add(nodeResourceScrollPane)
+								.add(layout.createSequentialGroup()
+										.add(processLabel)
+										.addPreferredGap(LayoutStyle.RELATED,GroupLayout.DEFAULT_SIZE,Short.MAX_VALUE)
+										.add(addProcessLabel)
+										.add(removeProcessLabel)
+								)
+								.add(processScrollPane)
+								.add(layout.createSequentialGroup()
+										.add(eventLabel)
+										.addPreferredGap(LayoutStyle.RELATED,GroupLayout.DEFAULT_SIZE,Short.MAX_VALUE)
+										.add(addEventLabel)
+										.add(removeEventLabel)
+								)
+								.add(eventScrollPane)
+						)
+		);
+		layout.setVerticalGroup(
+				layout.createParallelGroup()
+						.add(layout.createSequentialGroup()
+//								.add(simulationNameLabel)
+								.add(simulationNameField)
+								.add(setSimulationNameButton)
+								.add(hseparator,GroupLayout.PREFERRED_SIZE,GroupLayout.DEFAULT_SIZE,GroupLayout.PREFERRED_SIZE)
+								.addPreferredGap(LayoutStyle.UNRELATED)
+								.add(layout.createParallelGroup()
+										.add(engineLabel)
+										.add(addEngineLabel)
+										.add(removeEngineLabel)
+
+								)
+								.add(engineScrollPane)
+								.add(layout.createParallelGroup()
+										.add(gnuPlotLabel)
+										.add(addGnuPlotLabel)
+										.add(removeGnuPlotLabel)
+
+								)
+								.add(gnuPlotFileScrollPane)
+						)
+						.add(layout.createSequentialGroup()
+								.add(parametersLabel)
+								.add(layout.createParallelGroup()
+										.add(nodeParameterLabel)
+										.add(addNodeParameterLabel)
+										.add(removeNodeParameterLabel)
+
+								)
+								.add(nodeParameterScrollPane)
+								.add(layout.createParallelGroup()
+										.add(nodeResourceLabel)
+										.add(addNodeResourceLabel)
+										.add(removeNodeResourceLabel)
+
+								)
+								.add(nodeResourceScrollPane)
+								.add(layout.createParallelGroup()
+										.add(processLabel)
+										.add(addProcessLabel)
+										.add(removeProcessLabel)
+
+								)
+								.add(processScrollPane)
+								.add(layout.createParallelGroup()
+										.add(eventLabel)
+										.add(addEventLabel)
+										.add(removeEventLabel)
+
+								)
+								.add(eventScrollPane)
+						)
+		);
+
+
 	}// </editor-fold>//GEN-END:initComponents
 
 	private void addNodeParameterLabelMouseClicked(java.awt.event.MouseEvent evt) {// GEN-FIRST:event_addNodeParameterLabelMouseClicked
@@ -614,6 +798,67 @@ public class DeusSimulationPanel extends javax.swing.JPanel {
 		removeProcessLabel
 				.setIcon(new javax.swing.ImageIcon(("res/remove.png")));
 	}// GEN-LAST:event_removeProcessLabelMouseReleased
+
+	/* @author Mirco Rosa (mirco.rosa.91@gmail.com) [Event Parametrization] */
+	private void addEventLabelMouseClicked(java.awt.event.MouseEvent evt) {// GEN-FIRST:event_addProcessLabelMouseClicked
+		addEventParameter(new EventParameter());
+	}// GEN-LAST:event_addProcessLabelMouseClicked
+
+	private void addEventLabelMousePressed(java.awt.event.MouseEvent evt) {// GEN-FIRST:event_addProcessLabelMousePressed
+		addEventLabel.setIcon(new javax.swing.ImageIcon(("res/add_BN.png")));
+	}// GEN-LAST:event_addProcessLabelMousePressed
+
+	private void addEventLabelMouseReleased(java.awt.event.MouseEvent evt) {// GEN-FIRST:event_addProcessLabelMouseReleased
+		addEventLabel.setIcon(new javax.swing.ImageIcon(("res/add.png")));
+	}// GEN-LAST:event_addProcessLabelMouseReleased
+
+	private void removeEventLabelMouseClicked(java.awt.event.MouseEvent evt) {// GEN-FIRST:event_removeProcessLabelMouseClicked
+		int tableRow = this.eventTable.getSelectedRow();
+
+		int totalTableRow = this.eventTable.getSelectedRowCount();
+
+		if (totalTableRow == this.eventParameterList.size()) {
+			eventParameterList.clear();
+
+			eventParameterTableModel = new EventParameterTableModel();
+			eventParameterTableModel.set_FileTableModel(eventParameterList);
+
+			eventTable.setModel(eventParameterTableModel);
+
+			tableRow = -1;
+
+		}
+
+		if (tableRow != -1) {
+			eventParameterList.remove(tableRow);
+
+			eventParameterTableModel = new EventParameterTableModel();
+			eventParameterTableModel.set_FileTableModel(eventParameterList);
+
+			eventTable.setModel(eventParameterTableModel);
+		}
+	}// GEN-LAST:event_removeProcessLabelMouseClicked
+
+	private void removeEventLabelMousePressed(java.awt.event.MouseEvent evt) {// GEN-FIRST:event_removeProcessLabelMousePressed
+		removeEventLabel.setIcon(new javax.swing.ImageIcon(
+				("res/remove_BN.png")));
+	}// GEN-LAST:event_removeProcessLabelMousePressed
+
+	private void removeEventLabelMouseReleased(java.awt.event.MouseEvent evt) {// GEN-FIRST:event_removeProcessLabelMouseReleased
+		removeEventLabel
+				.setIcon(new javax.swing.ImageIcon(("res/remove.png")));
+	}// GEN-LAST:event_removeProcessLabelMouseReleased
+
+
+	/////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
+
+
 
 	private void addEngineLabelMouseClicked(java.awt.event.MouseEvent evt) {// GEN-FIRST:event_addEngineLabelMouseClicked
 		addEngineParameter(new EngineParameter());
@@ -808,6 +1053,29 @@ public class DeusSimulationPanel extends javax.swing.JPanel {
 			xmlString = xmlString + "\n" + "</process>" + "\n\t";
 		}
 
+		/* @author Mirco Rosa (mirco.rosa.91@gmail.com) [Event Parametrization] */
+		for (int index = 0; index < this.eventParameterList.size(); index++) {
+			app.add(this.eventParameterList.get(index));
+			EventParameter eventParameter = this.eventParameterList
+					.get(index);
+			xmlString = xmlString + "\n" + "<event id=\""
+					+ eventParameter.getEventId() + "\">";
+			xmlString = xmlString + "\n\t" + "<paramName name=\""
+					+ eventParameter.getParamName() + "\">";
+			xmlString = xmlString + "\n\t\t" + "<initialValue>"
+					+ eventParameter.getInitialValue() + "</initialValue>";
+			xmlString = xmlString + "\n\t\t" + "<finalValue>"
+					+ eventParameter.getFinalValue() + "</finalValue>";
+			xmlString = xmlString + "\n\t\t" + "<stepValue>"
+					+ eventParameter.getStepValue() + "</stepValue>";
+			xmlString = xmlString + "\n\t" + "</paramName>" + "\t";
+			xmlString = xmlString + "\n" + "</event>" + "\n\t";
+		}
+
+		//////////////////////////////////////////////
+
+
+
 		/**
 		 * Scrittura dei valori dell Engine
 		 * 
@@ -916,6 +1184,17 @@ public class DeusSimulationPanel extends javax.swing.JPanel {
 		processTable.setModel(processParameterTableModel);
 	}
 
+	/* @author Mirco Rosa (mirco.rosa.91@gmail.com) [Event Parametrization] */
+	public void addEventParameter(EventParameter eventParameter) {
+		eventParameterList.add(eventParameter);
+
+		eventParameterTableModel = new EventParameterTableModel();
+		eventParameterTableModel.set_FileTableModel(eventParameterList);
+
+		eventTable.setModel(eventParameterTableModel);
+	}
+	/////////////////////////////////////////////////
+
 	/**
 	 * Aggiunge un nuovo EngineParameter alla tabella
 	 * 
@@ -967,6 +1246,8 @@ public class DeusSimulationPanel extends javax.swing.JPanel {
 	private javax.swing.JLabel addNodeParameterLabel;
 	private javax.swing.JLabel addNodeResourceLabel;
 	private javax.swing.JLabel addProcessLabel;
+	private javax.swing.JLabel addEventLabel; /* @author Mirco Rosa (mirco.rosa.91@gmail.com) [Event Parametrization] */
+
 	private javax.swing.JLabel engineLabel;
 	private javax.swing.JScrollPane engineScrollPane;
 	private javax.swing.JTable engineTable;
@@ -982,14 +1263,23 @@ public class DeusSimulationPanel extends javax.swing.JPanel {
 	private javax.swing.JLabel processLabel;
 	private javax.swing.JScrollPane processScrollPane;
 	private javax.swing.JTable processTable;
+	private javax.swing.JLabel eventLabel;
+	private javax.swing.JScrollPane eventScrollPane;
+	private javax.swing.JTable eventTable;
+
 	private javax.swing.JLabel removeEngineLabel;
 	private javax.swing.JLabel removeGnuPlotLabel;
 	private javax.swing.JLabel removeNodeParameterLabel;
 	private javax.swing.JLabel removeNodeResourceLabel;
 	private javax.swing.JLabel removeProcessLabel;
+	private javax.swing.JLabel removeEventLabel;/* @author Mirco Rosa (mirco.rosa.91@gmail.com) [Event Parametrization] */
+
+	private javax.swing.JSeparator hseparator;
+	private javax.swing.JLabel parametersLabel;/* @author Mirco Rosa (mirco.rosa.91@gmail.com) [Event Parametrization] */
+
 	private javax.swing.JButton setSimulationNameButton;
 	private javax.swing.JTextField simulationNameField;
-	private javax.swing.JLabel simulationNameLabel;
+//	private javax.swing.JLabel simulationNameLabel;
 	private ArrayList<Node> nodeList;
 	// End of variables declaration//GEN-END:variables
 

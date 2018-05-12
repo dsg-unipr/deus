@@ -3,6 +3,7 @@ package it.unipr.ce.dsg.deus.impl.node;
 import java.util.ArrayList;
 import java.util.Properties;
 
+import it.unipr.ce.dsg.deus.core.Engine;
 import it.unipr.ce.dsg.deus.core.InvalidParamsException;
 import it.unipr.ce.dsg.deus.core.Node;
 import it.unipr.ce.dsg.deus.core.Resource;
@@ -27,8 +28,8 @@ public class BasicNode extends Node {
 		// nothing to be done
 	}
 
-	public Object clone() {
-		BasicNode clone = (BasicNode) super.clone();
+	public Object clone(Engine engine) {
+		BasicNode clone = (BasicNode) super.clone(engine);
 		return clone;
 	}
 }

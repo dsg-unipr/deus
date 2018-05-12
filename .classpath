@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="examples/basic/src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/activation.jar"/>
 	<classpathentry kind="lib" path="lib/jaxb-api.jar"/>
@@ -20,7 +21,6 @@
 	<classpathentry kind="lib" path="lib/editor/jung-graph-impl-2.0.jar"/>
 	<classpathentry kind="lib" path="lib/editor/jung-io-2.0.jar"/>
 	<classpathentry kind="lib" path="lib/editor/jung-jai-2.0.jar"/>
-	<classpathentry kind="lib" path="lib/editor/jung-jai-samples-2.0.jar"/>
 	<classpathentry kind="lib" path="lib/editor/jung-visualization-2.0.jar"/>
 	<classpathentry kind="lib" path="lib/editor/stax-api-1.0.1.jar"/>
 	<classpathentry kind="lib" path="lib/editor/wstx-asl-3.2.6.jar"/>

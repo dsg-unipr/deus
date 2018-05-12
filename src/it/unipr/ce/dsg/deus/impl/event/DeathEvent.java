@@ -1,6 +1,5 @@
 package it.unipr.ce.dsg.deus.impl.event;
 
-import it.unipr.ce.dsg.deus.core.Engine;
 import it.unipr.ce.dsg.deus.core.Event;
 import it.unipr.ce.dsg.deus.core.InvalidParamsException;
 import it.unipr.ce.dsg.deus.core.Node;
@@ -40,22 +39,22 @@ public class DeathEvent extends Event {
 	@Override
 	public void run() throws RunException {
 		if (nodeToKill == null) {
-			if (Engine.getDefault().getNodes().size() > 0) {
-				int nodeIndex = Engine.getDefault().getSimulationRandom().nextInt(Engine.getDefault().getNodes().size());
-				Engine.getDefault().removeNode(Engine.getDefault().getNodes().get(nodeIndex));
+			if (this.engine.getNodes().size() > 0) {
+				int nodeIndex = this.engine.getSimulationRandom().nextInt(this.engine.getNodes().size());
+				this.engine.removeNode(this.engine.getNodes().get(nodeIndex));
 			}
 				/*
-				Engine.getDefault().getNodes().remove(
-						Engine.getDefault().getSimulationRandom().nextInt(
-								Engine.getDefault().getNodes().size()));
+				this.engine.getNodes().remove(
+						this.engine.getSimulationRandom().nextInt(
+								this.engine.getNodes().size()));
 								*/
 		} else {
 			//System.out.println("death: nodeToKill = " + nodeToKill.getKey());
-			Engine.getDefault().removeNode(nodeToKill);
+			this.engine.removeNode(nodeToKill);
 			/*
-			int n = Engine.getDefault().getNodes().indexOf(nodeToKill);
+			int n = this.engine.getNodes().indexOf(nodeToKill);
 			if (n > -1)
-				Engine.getDefault().getNodes().remove(n);
+				this.engine.getNodes().remove(n);
 				*/
 		}
 

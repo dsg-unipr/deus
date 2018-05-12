@@ -16,6 +16,7 @@ public class SimulationSummaryFrame extends javax.swing.JFrame {
 	private boolean isStart = false;
 	private boolean isClose = false;
 	private Runner runner = null;
+	private boolean multithreading = false; /*@author Mirco Rosa (mirco.rosa.91@gmail.com) [multithreading]*/
 
 	/**
 	 * Creates new form SimulationSummaryFrame
@@ -169,7 +170,7 @@ public class SimulationSummaryFrame extends javax.swing.JFrame {
 
 		new Thread(new Runnable() {
 			public void run() {
-				runner.runSimulations();
+				runner.runSimulations(multithreading);
 			}
 		}).start();
 
@@ -209,4 +210,9 @@ public class SimulationSummaryFrame extends javax.swing.JFrame {
 		this.simulationSummaryTextArea = simulationSummaryTextArea;
 	}
 
+	/*@author Mirco Rosa (mirco.rosa.91@gmail.com) [multithreading]*/
+
+	public void setMultithreading(boolean multithreading) {
+		this.multithreading = multithreading;
+	}
 }

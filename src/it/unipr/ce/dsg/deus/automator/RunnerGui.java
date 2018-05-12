@@ -24,6 +24,7 @@ import org.xml.sax.SAXException;
 public class RunnerGui extends Runner {
 
 	private JProgressBar simulationProgressBar = null;
+	private boolean multithreading = false; /*@author Mirco Rosa (mirco.rosa.91@gmail.com) [multithreading]*/
 	
 	
 	public RunnerGui(String originalXml, String automatorXml) {
@@ -51,6 +52,7 @@ public class RunnerGui extends Runner {
 		// Execute the GUI showing the summary of the simulation
 		SimulationSummaryFrame simulationsummary = new SimulationSummaryFrame(
 				this);
+		simulationsummary.setMultithreading(multithreading);
 		simulationsummary.getSimulationSummaryTextArea().setText(summary);
 		simulationsummary.setVisible(true);
 
@@ -60,19 +62,18 @@ public class RunnerGui extends Runner {
 	/**
 	 * 
 	 */
-	public void runSimulations() {
+	public void runSimulations(boolean multithreading) {
 		if (simulationProgressBar != null) {
 			simulationProgressBar.setMaximum(files.size());
 			simulationProgressBar.setMinimum(0);
 		}
-
 		
 		simulationProgressBar.setValue(0);
 		
 		NumFileListener listener = new NumFileListener();
 		addPropertyChangeListener(listener);
 		
-		super.runSimulations();
+		super.runSimulations(multithreading);
 
 	}
 	
@@ -91,9 +92,14 @@ public class RunnerGui extends Runner {
 	        if (event.getPropertyName().equals("NumFileProperty")) {
 	        	//System.err.println("AAA !" );
 	            //System.out.println(event.getNewValue().toString());
-	            simulationProgressBar.setValue(numFile);
+//	            simulationProgressBar.setValue(numFile);  //Modified by Mirco Rosa (mirco.rosa.91@gmail.com)
+		        simulationProgressBar.setValue((int)event.getNewValue());
 	        }
 	    }
 	}
-	
+
+	/*@author Mirco Rosa (mirco.rosa.91@gmail.com) [multithreading]*/
+	public void setMultithreading(boolean multithreading) {
+		this.multithreading = multithreading;
+	}
 }

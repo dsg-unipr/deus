@@ -12,6 +12,10 @@ public class MyObjectSimulation {
 
 	private ArrayList<ArrayList<MyObjectNode>> node = new ArrayList<ArrayList<MyObjectNode>>();
 	private ArrayList<ArrayList<MyObjectProcess>> process = new ArrayList<ArrayList<MyObjectProcess>>();
+
+	private ArrayList<ArrayList<MyObjectEvent>> event = new ArrayList<ArrayList<MyObjectEvent>>();	/* @author Mirco Rosa (mirco.rosa.91@gmail.com) [Event Parametrization] */
+
+
 	private ArrayList<MyObjectEngine> engine = new ArrayList<MyObjectEngine>();
 	private ArrayList<MyObjectGnuplot> gnuplot = new ArrayList<MyObjectGnuplot>();
 	private String simulationNumberSeed;
@@ -42,6 +46,15 @@ public class MyObjectSimulation {
 	public void setProcess(ArrayList<ArrayList<MyObjectProcess>> process) {
 		this.process = process;
 	}
+
+	/* @author Mirco Rosa (mirco.rosa.91@gmail.com) [Event Parametrization] */
+	public ArrayList<ArrayList<MyObjectEvent>> getEvent() {
+		return event;
+	}
+	public void setEvent(ArrayList<ArrayList<MyObjectEvent>> event) {
+		this.event = event;
+	}
+	//////////////////
 
 	public ArrayList<MyObjectEngine> getEngine() {
 		return engine;

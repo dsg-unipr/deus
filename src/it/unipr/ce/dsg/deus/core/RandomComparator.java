@@ -24,16 +24,18 @@ public class RandomComparator implements Comparator<Event> {
 	@Override
 	public int compare(Event o1, Event o2) {
 		//System.out.println(o1.id + " compared to event " + o2.id);
-        int result = 0;
-        if (o1.triggeringTime < o2.triggeringTime)
+		int result = 0;
+		if ((o1 != null) && (o2 != null)) { 
+			if (o1.triggeringTime < o2.triggeringTime)
                 result = -1;
-        else if (o1.triggeringTime == o2.triggeringTime) {
+			else if (o1.triggeringTime == o2.triggeringTime) {
                 result = this.getNextComparatorInt();
                 //System.out.println("result = " + result);
-        }
-        else if (o1.triggeringTime > o2.triggeringTime)
-                result = 1;
-        return result;
+			}
+			else if (o1.triggeringTime > o2.triggeringTime)
+                result = 1;   
+		}
+		return result;
 	}
 
 	public int getNextComparatorInt() {

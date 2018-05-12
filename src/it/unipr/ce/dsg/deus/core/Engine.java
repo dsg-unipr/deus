@@ -42,9 +42,10 @@ import java.util.logging.Logger;
  * 
  * @author Matteo Agosti
  * @author Michele Amoretti (michele.amoretti@unipr.it)
+ * @author Mirco Rosa (mirco.rosa.91@gmail.com) [multithreading]
  * 
  */
-public final class Engine extends SimulationObject {
+public class Engine extends SimulationObject {
 	public static final Level DEFAULT_LOGGER_LEVEL = Level.INFO;
 
 	public static final String DEFAULT_LOGGER_PATH_PREFIX = "log";
@@ -76,7 +77,8 @@ public final class Engine extends SimulationObject {
 	//private Random keyRandom = null;
 	private DeusRandom keyRandom = null;
 
-	private static Engine engine = null;
+	private Engine engine = null;
+	//private static Engine engine2;
 
 	private ArrayList<Node> nodes = null;
 
@@ -87,7 +89,20 @@ public final class Engine extends SimulationObject {
 	
 	//private ArrayList<Integer> generatedResourcesKeys = null;
 	private HashSet<Integer> generatedResourcesKeys = null;
-	
+
+
+	//////////////////////TODO Edited
+	private String logFileName = null;
+
+	public void setLogFileName(String logFileName) {
+		this.logFileName = logFileName;
+	}
+
+	public String getLogFileName() {
+		return logFileName;
+	}
+	/////////////////////////
+
 	/**
 	 * Class constructor that initializes the simulation engine according to the
 	 * parameters extracted from the configuration file.
@@ -141,6 +156,7 @@ public final class Engine extends SimulationObject {
 			ArrayList<Event> configEvents, ArrayList<Process> configProcesses,
 			ArrayList<Process> referencedProcesses, String randomGenerator) {
 		engine = this;
+		//engine2 = this;
 		this.maxVirtualTime = maxVirtualTime;
 		if(keySpaceSize == null)
 			this.keySpaceSize = Integer.MAX_VALUE;
@@ -201,7 +217,7 @@ public final class Engine extends SimulationObject {
 			for (Iterator<Event> it2 = p.getReferencedEvents().iterator(); it2
 					.hasNext();) {
 				Event e = it2.next();
-				insertIntoEventsList(e.createInstance(p.getNextTriggeringTime(e, virtualTime)));
+				insertIntoEventsList(e.createInstance(p.getNextTriggeringTime(e, virtualTime),this));
 			}
 		}
 	}
@@ -223,6 +239,10 @@ public final class Engine extends SimulationObject {
 	 *            the event to insert into the queue.
 	 */
 	public void insertIntoEventsList(Event e) {
+//		if (eventsList == null)
+//			System.out.println("eventList" + eventsList);
+//		if (e == null)
+//			System.out.println("e" + e);
 		eventsList.add(e);
 	}
 
@@ -242,7 +262,7 @@ public final class Engine extends SimulationObject {
 		for (Iterator<Event> it = configEvents.iterator(); it.hasNext();) {
 			Event e = it.next();
 			if (e.getClass().equals(eventClass))
-				return e.createInstance(triggeringTime);
+				return e.createInstance(triggeringTime,this);
 		}
 		return null;
 	}
@@ -263,7 +283,7 @@ public final class Engine extends SimulationObject {
 		for (Iterator<Event> it = configEvents.iterator(); it.hasNext();) {
 			Event e = it.next();
 			if (e.getId().equals(eventId))
-				return e.createInstance(triggeringTime);
+				return e.createInstance(triggeringTime, this);
 		}
 		return null;
 	}
@@ -298,12 +318,12 @@ public final class Engine extends SimulationObject {
 			virtualTime = e.getTriggeringTime();
 			if (virtualTime <= maxVirtualTime) {
 				try {
-					e.run();
-					e.scheduleReferencedEvents();
+						e.run();
+						e.scheduleReferencedEvents();
 					if (e.getParentProcess() != null && !e.isOneShot()) {
 						float nextNextTriggeringTime = e.getParentProcess().getNextTriggeringTime(e, virtualTime);
 						if (nextNextTriggeringTime <= maxVirtualTime)
-							insertIntoEventsList(e.createInstance(nextNextTriggeringTime)); 
+							insertIntoEventsList(e.createInstance(nextNextTriggeringTime, this)); 
 					}
 				} catch (RunException ex) {
 					throw new SimulationException(ex.getMessage());
@@ -329,7 +349,7 @@ public final class Engine extends SimulationObject {
 					if (e.getParentProcess() != null && !e.isOneShot()) {
 						float nextNextTriggeringTime = e.getParentProcess().getNextTriggeringTime(e, virtualTime);
 						if (nextNextTriggeringTime <= maxVirtualTime)
-							insertIntoEventsList(e.createInstance(nextNextTriggeringTime)); 
+							insertIntoEventsList(e.createInstance(nextNextTriggeringTime, this)); 
 					}
 				} catch (RunException ex) {
 					throw new SimulationException(ex.getMessage());
@@ -343,7 +363,7 @@ public final class Engine extends SimulationObject {
 	 * 
 	 * @return the current instance of the simulation engine class.
 	 */
-	public static Engine getDefault() {
+	public Engine getDefault() {
 		return engine;
 	}
 

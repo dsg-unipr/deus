@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Properties;
 //import java.util.Random;
 
-import it.unipr.ce.dsg.deus.core.Engine;
 import it.unipr.ce.dsg.deus.core.Event;
 import it.unipr.ce.dsg.deus.core.InvalidParamsException;
 import it.unipr.ce.dsg.deus.core.Node;
@@ -97,7 +96,7 @@ public class RectangularPulsePoissonProcess extends Process {
 		else if ((virtualTime >= startVtThreshold) && ((virtualTime + delta) < stopVtThreshold))
 			return virtualTime + delta;
 		else
-			return virtualTime + Engine.getDefault().getMaxVirtualTime(); // thus the event will not be executed
+			return virtualTime + event.getEngine().getMaxVirtualTime(); // thus the event will not be executed
 		
 		/*
 		if (virtualTime < startVtThreshold)

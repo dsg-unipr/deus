@@ -27,6 +27,8 @@ public abstract class Node extends SimulationObject implements
 	protected ArrayList<Resource> resources = null;
 
 	protected Properties params = null;
+	
+	protected Engine engine = null;
 
 	/**
 	 * Class constructor that builds the node with its minimal set of
@@ -111,18 +113,19 @@ public abstract class Node extends SimulationObject implements
 	 *            the key of the newly created node instance.
 	 * @return the newly created node instance.
 	 */
-	public Node createInstance(int key) {
-		Node clone = (Node) clone();
-		clone.key = key;
+	public Node createInstance(Engine engine) {
+		Node clone = (Node) clone(engine);
+		clone.key = engine.generateKey();
 		return clone;
 	}
 
 	/**
 	 * Clone the node.
 	 */
-	public Object clone() {
+	public Object clone(Engine engine) {
 		try {
 			Node clone = (Node) super.clone();
+			clone.engine = engine;
 			return clone;
 		} catch (CloneNotSupportedException e) {
 			throw new InternalError(e.toString());
@@ -135,5 +138,13 @@ public abstract class Node extends SimulationObject implements
 
 	public void setKey(int key) {
 		this.key = key;
+	}
+	
+	public void setEngine(Engine engine) {
+		this.engine = engine;
+	}
+	
+	public Engine getEngine() {
+		return engine;
 	}
 }

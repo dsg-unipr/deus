@@ -1,6 +1,5 @@
 package it.unipr.ce.dsg.deus.p2p.event;
 
-import it.unipr.ce.dsg.deus.core.Engine;
 import it.unipr.ce.dsg.deus.core.InvalidParamsException;
 import it.unipr.ce.dsg.deus.core.Node;
 import it.unipr.ce.dsg.deus.core.Event;
@@ -56,13 +55,13 @@ public class ExpTopologyConnectionEvent extends Event {
 		if (!(associatedNode instanceof Peer))
 			throw new RunException("The associated node is not a Peer!");
 		
-		int n = Engine.getDefault().getNodes().size();
+		int n = this.engine.getNodes().size();
 		if (n == n0) {
 			// connect all nodes
 			for (int i = 0; i < n; i++) {
 				for (int j = 0; j < n; j++) {
 					if ( i != j) {
-						Peer target = (Peer) Engine.getDefault().getNodes().get(j);
+						Peer target = (Peer) this.engine.getNodes().get(j);
 						if (((Peer) associatedNode).addNeighbor(target)) {
 							if (isBidirectional)
 								target.addNeighbor(((Peer) associatedNode));
@@ -72,12 +71,12 @@ public class ExpTopologyConnectionEvent extends Event {
 			}
 		}
 		else if (n > n0) {
-			//int m = Engine.getDefault().getSimulationRandom().nextInt(numInitialConnections+1);
+			//int m = this.engine.getSimulationRandom().nextInt(numInitialConnections+1);
 			do {
 				Peer target = null;			
 				do {			
-					int randomInt = Engine.getDefault().getSimulationRandom().nextInt(n);
-					Node randomNode = Engine.getDefault().getNodes().get(randomInt);
+					int randomInt = this.engine.getSimulationRandom().nextInt(n);
+					Node randomNode = this.engine.getNodes().get(randomInt);
 					if (!(randomNode instanceof Peer)) {
 						target = null;					
 						continue;

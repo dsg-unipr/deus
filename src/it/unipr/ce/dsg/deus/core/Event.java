@@ -49,6 +49,7 @@ public abstract class Event extends SimulationObject implements Cloneable {
 	protected static final String HAS_SAME_ASSOCIATED_NODE = "hasSameAssociatedNode";
 	protected boolean hasSameAssociatedNode = false;
 	protected Node associatedNode = null;
+	protected Engine engine = null;
 
 	/**
 	 * Class constructor that builds the event with its minimal set of
@@ -81,6 +82,10 @@ public abstract class Event extends SimulationObject implements Cloneable {
 	public int getEventSeed() {
 		return eventSeed;
 	}
+	
+	public Engine getEngine() {
+		return engine;
+	}
 
 //	public void setEventSeed(int eventSeed) {
 //		this.eventSeed = eventSeed;
@@ -108,20 +113,6 @@ public abstract class Event extends SimulationObject implements Cloneable {
 	}
 
 	/**
-	 * Clone the event.
-	 */
-	public Object clone() {
-		try {
-			Event clone = (Event) super.clone();
-			if (!hasSameAssociatedNode)
-				clone.associatedNode = null;
-			return clone;
-		} catch (CloneNotSupportedException e) {
-			throw new InternalError(e.toString());
-		}
-	}
-
-	/**
 	 * Create an instance of the current event by cloning it and updating the
 	 * triggering time.
 	 * 
@@ -129,8 +120,9 @@ public abstract class Event extends SimulationObject implements Cloneable {
 	 *            the triggering time of the newly created event instance.
 	 * @return the newly created event instance.
 	 */
-	public Event createInstance(float triggeringTime) {
+	public Event createInstance(float triggeringTime, Engine engine) {
 		Event clone = (Event) clone();
+		clone.engine = engine;
 		if (schedulerListener != null)
 			try {
 				clone.schedulerListener = schedulerListener.getClass()
@@ -144,6 +136,20 @@ public abstract class Event extends SimulationObject implements Cloneable {
 		return clone;
 	}
 
+	/**
+	 * Clone the event.
+	 */
+	public Object clone() {
+		try {
+			Event clone = (Event) super.clone();
+			if (!hasSameAssociatedNode)
+				clone.associatedNode = null;
+			return clone;
+		} catch (CloneNotSupportedException e) {
+			throw new InternalError(e.toString());
+		}
+	}
+	
 	/**
 	 * Performs the standard Object.equals comparison by using the event id as
 	 * the criteria.
@@ -201,10 +207,10 @@ public abstract class Event extends SimulationObject implements Cloneable {
 			if (event.getParentProcess() == null)
 				continue;
 			referencedEventTriggeringTime = event.getParentProcess().getNextTriggeringTime(event, triggeringTime);
-			if (referencedEventTriggeringTime <= Engine.getDefault().getMaxVirtualTime()) {
-				Event eventToSchedule = event.createInstance(referencedEventTriggeringTime);
+			if (referencedEventTriggeringTime <= engine.getMaxVirtualTime()) {
+				Event eventToSchedule = event.createInstance(referencedEventTriggeringTime, this.engine);
 				schedulerListener.newEventScheduled(this, eventToSchedule);
-				Engine.getDefault().insertIntoEventsList(eventToSchedule);
+				engine.insertIntoEventsList(eventToSchedule);
 			}
 		}
 	}

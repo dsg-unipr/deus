@@ -1,6 +1,5 @@
 package it.unipr.ce.dsg.deus.impl.event;
 
-import it.unipr.ce.dsg.deus.core.Engine;
 import it.unipr.ce.dsg.deus.core.InvalidParamsException;
 import it.unipr.ce.dsg.deus.core.Node;
 import it.unipr.ce.dsg.deus.core.Event;
@@ -29,6 +28,11 @@ public class BirthEvent extends Event {
 		// TODO implement params to establish the policy of node type initialization
 		// (now choose one type only - randomly - from the parent process)
 	}
+	
+	public Object clone() {
+		BirthEvent clone = (BirthEvent) super.clone();
+		return clone;
+	}
 
 	public void run() throws RunException {
 
@@ -39,10 +43,10 @@ public class BirthEvent extends Event {
 		// create a node (the type is randomly chosen among those which are
 		// associated to the process)
 		Node n = (Node) getParentProcess().getReferencedNodes().get(
-				Engine.getDefault().getSimulationRandom().nextInt(
+				this.engine.getSimulationRandom().nextInt(
 						getParentProcess().getReferencedNodes().size()))
-				.createInstance(Engine.getDefault().generateKey());
-		Engine.getDefault().addNode(n);
+				.createInstance(this.engine);
+		this.engine.addNode(n);
 		associatedNode = n;
 	}
 

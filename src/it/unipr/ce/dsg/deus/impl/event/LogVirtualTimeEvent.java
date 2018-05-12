@@ -1,6 +1,5 @@
 package it.unipr.ce.dsg.deus.impl.event;
 
-import it.unipr.ce.dsg.deus.core.Engine;
 import it.unipr.ce.dsg.deus.core.Event;
 import it.unipr.ce.dsg.deus.core.InvalidParamsException;
 import it.unipr.ce.dsg.deus.core.Process;
@@ -22,7 +21,7 @@ public class LogVirtualTimeEvent extends Event {
 	}
 
 	public void run() throws RunException {
-		System.out.println("Virtual Time: " + Engine.getDefault().getVirtualTime());
+		System.out.println("Virtual Time: " + this.engine.getVirtualTime());
 	}
 
 }

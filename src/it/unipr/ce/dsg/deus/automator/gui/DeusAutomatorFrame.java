@@ -1,7 +1,6 @@
 package it.unipr.ce.dsg.deus.automator.gui;
 
 import it.unipr.ce.dsg.deus.automator.DeusAutomatorException;
-import it.unipr.ce.dsg.deus.automator.Runner;
 import it.unipr.ce.dsg.deus.automator.RunnerGui;
 
 import java.awt.BorderLayout;
@@ -13,14 +12,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Scanner;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.UIManager;
+import javax.swing.*;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
@@ -136,9 +129,14 @@ public class DeusAutomatorFrame extends javax.swing.JFrame {
 		runLabel = new javax.swing.JLabel();
 		removeSimulationLabel = new javax.swing.JLabel();
 
+		/* @author Mirco Rosa (mirco.rosa.91@gmail.com) [Multithreading, Data Cleaning] */
+		multithreadingCheckBox = new javax.swing.JCheckBox("Multithreading");
+		clearResultsLabel = new javax.swing.JLabel();
+
+
 		setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 		setForeground(java.awt.Color.white);
-		setResizable(false);
+		setResizable(true);
 
 		dsgLogoLabel.setFont(new java.awt.Font("Lucida Grande", 1, 13));
 		dsgLogoLabel.setForeground(new java.awt.Color(204, 0, 0));
@@ -239,6 +237,24 @@ public class DeusAutomatorFrame extends javax.swing.JFrame {
 			}
 		});
 
+		/* @author Mirco Rosa (mirco.rosa.91@gmail.com) [Data Cleaning] */
+		clearResultsLabel.setIcon(new javax.swing.ImageIcon(("res/Delete_01.png"))); // NOI18N
+		clearResultsLabel.setText("Clear Results");
+		clearResultsLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+			public void mousePressed(java.awt.event.MouseEvent evt) {
+				clearResultsLabelMousePressed(evt);
+			}
+
+			public void mouseReleased(java.awt.event.MouseEvent evt) {
+				clearResultsLabelMouseReleased(evt);
+			}
+
+			public void mouseClicked(java.awt.event.MouseEvent evt) {
+				clearResultsLabelMouseClicked(evt);
+			}
+		});
+
+
 		org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(
 				getContentPane());
 		getContentPane().setLayout(layout);
@@ -252,7 +268,7 @@ public class DeusAutomatorFrame extends javax.swing.JFrame {
 										org.jdesktop.layout.GroupLayout.LEADING)
 								.add(simulationTabbedPane,
 										org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
-										979, Short.MAX_VALUE)
+										1100, Short.MAX_VALUE)
 								.add(dsgLogoLabel)
 								.add(layout
 										.createSequentialGroup()
@@ -268,10 +284,14 @@ public class DeusAutomatorFrame extends javax.swing.JFrame {
 										.add(removeSimulationLabel)
 										.addPreferredGap(
 												org.jdesktop.layout.LayoutStyle.UNRELATED)
+										.add(clearResultsLabel)
+										.addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
 										.add(runLabel)
+										.addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+										.add(multithreadingCheckBox)
 										.addPreferredGap(
-												org.jdesktop.layout.LayoutStyle.RELATED,
-												276, Short.MAX_VALUE)
+										org.jdesktop.layout.LayoutStyle.RELATED,
+										276, Short.MAX_VALUE)
 										.add(simulationStatusLabel)
 										.addPreferredGap(
 												org.jdesktop.layout.LayoutStyle.UNRELATED)
@@ -298,17 +318,22 @@ public class DeusAutomatorFrame extends javax.swing.JFrame {
 												.add(addSimulationLabel)
 												.add(simulationStatusLabel)
 												.add(removeSimulationLabel)
-												.add(runLabel)))
+												.add(clearResultsLabel)
+												.add(runLabel)
+										.add(multithreadingCheckBox)))
 								.add(simulationProgressBar,
 										org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
 										org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
 										org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
 						.addPreferredGap(
 								org.jdesktop.layout.LayoutStyle.RELATED)
+//						.add(simulationTabbedPane,
+//								org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
+//								600,
+//								org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
 						.add(simulationTabbedPane,
-								org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
-								510,
-								org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+								org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
+								550, Short.MAX_VALUE)
 						.addContainerGap(15, Short.MAX_VALUE)));
 
 		pack();
@@ -329,6 +354,20 @@ public class DeusAutomatorFrame extends javax.swing.JFrame {
 		removeSimulationLabel.setIcon(new javax.swing.ImageIcon(
 				"res/remove_BN.png"));
 
+	}
+
+
+	/* @author Mirco Rosa (mirco.rosa.91@gmail.com) [Data Cleaning] */
+	protected void clearResultsLabelMouseClicked(MouseEvent evt) {
+		clearResults();
+	}
+
+	protected void clearResultsLabelMouseReleased(MouseEvent evt) {
+		//Does nothing
+	}
+
+	protected void clearResultsLabelMousePressed(MouseEvent evt) {
+		//Does nothing
 	}
 
 	private void openLabelMouseClicked(java.awt.event.MouseEvent evt) {// GEN-FIRST:event_openLabelMouseClicked
@@ -487,14 +526,23 @@ public class DeusAutomatorFrame extends javax.swing.JFrame {
 
 	private void runLabelMouseClicked(java.awt.event.MouseEvent evt)
 			throws IOException {// GEN-FIRST:event_runLabelMouseClicked
-		
-		
+
+		if(checkOldData())
+			switch (JOptionPane.showConfirmDialog(this,"Results or temporary files from previous simulations have been detected.\nDo you want to remove them? This operation can't be undone.","Clear Results and Temporary files",JOptionPane.YES_NO_OPTION,JOptionPane.QUESTION_MESSAGE)) {
+				case 0:
+					clearData();
+					break;
+				case 1:
+					//No data deleted
+					break;
+			}
 		
 		writeAutomatorXML(this.outFileName);
 
 		// Run saved file
 		//Runner runner = new Runner(this.originalXmlPath, this.outFileName);
 		RunnerGui runner = new RunnerGui(this.originalXmlPath, this.outFileName);
+		runner.setMultithreading(multithreadingCheckBox.isSelected()); /*@author Mirco Rosa (mirco.rosa.91@gmail.com) [multithreading]*/
 		
 		//check for gnuplot incompatibility
 		boolean gnuPlotCheck = runner.checkGnuPlotIncompatibility();
@@ -595,7 +643,6 @@ public class DeusAutomatorFrame extends javax.swing.JFrame {
 	public static void main(final String args[]) {
 		java.awt.EventQueue.invokeLater(new Runnable() {
 			public void run() {
-
 				DeusAutomatorFrame deusAutomatorFrame = new DeusAutomatorFrame(
 						args[0], args[1]);
 				deusAutomatorFrame.setVisible(true);
@@ -612,6 +659,11 @@ public class DeusAutomatorFrame extends javax.swing.JFrame {
 	private javax.swing.JProgressBar simulationProgressBar;
 	private javax.swing.JLabel simulationStatusLabel;
 	private javax.swing.JTabbedPane simulationTabbedPane;
+
+	/* @author Mirco Rosa (mirco.rosa.91@gmail.com) [Multithreading, Data Cleaning] */
+	private JCheckBox multithreadingCheckBox;
+	private javax.swing.JLabel clearResultsLabel;
+
 
 	// End of variables declaration//GEN-END:variables
 	public String getOriginalXmlPath() {
@@ -908,6 +960,66 @@ public class DeusAutomatorFrame extends javax.swing.JFrame {
 
 				}
 
+
+				/* @author Mirco Rosa (mirco.rosa.91@gmail.com) [Event Parametrization] */
+				NodeList eventList = document.getElementsByTagName("event");
+
+				// list of events
+				for (int s = 0; s < eventList.getLength(); s++) {
+
+					Node fstNode = eventList.item(s);
+
+					if (fstNode.getParentNode().equals(simulationLst.item(w))) {
+
+						// event name
+						String messageType = fstNode.getAttributes()
+								.getNamedItem("id").getNodeValue();
+
+						Element fstElmnt = (Element) fstNode;
+						NodeList fstNmElmntLst = fstElmnt
+								.getElementsByTagName("paramName");
+
+						// Retrieve all params in event' ParamName
+						for (int j = 0; j < fstNmElmntLst.getLength(); j++) {
+
+							Element paramElement = (Element) fstNmElmntLst
+									.item(j);
+
+							// name of event param
+							String paramName = ((Node) fstNmElmntLst.item(j))
+									.getAttributes().getNamedItem("name")
+									.getNodeValue();
+
+							NodeList initialValue = paramElement
+									.getElementsByTagName("initialValue");
+
+							NodeList finalValue = paramElement
+									.getElementsByTagName("finalValue");
+
+							NodeList stepValue = paramElement
+									.getElementsByTagName("stepValue");
+
+							// values of params
+							Double init = Double.parseDouble(initialValue.item(
+									0).getTextContent());
+							Double fin = Double.parseDouble(finalValue.item(0)
+									.getTextContent());
+							Double step = Double.parseDouble(stepValue.item(0)
+									.getTextContent());
+
+							EventParameter eventParameter = new EventParameter(
+									messageType, paramName, init, fin, step);
+
+							deusSimulationPanel
+									.addEventParameter(eventParameter);
+						}
+
+					}
+
+				}
+				///////////////////////////////
+
+
 				NodeList engineLst = document.getElementsByTagName("engine");
 
 				// engine
@@ -1052,6 +1164,56 @@ public class DeusAutomatorFrame extends javax.swing.JFrame {
 
 		return (DeusSimulationPanel) this.simulationTabbedPane
 				.getComponentAt(tabIndex);
+	}
+
+	/* @author Mirco Rosa (mirco.rosa.91@gmail.com) [Data Cleaning] */
+	private void clearResults() {
+		if(checkOldData())
+			switch (JOptionPane.showConfirmDialog(this,"Do you want to remove all the results and temporary files of previous simulations?\nThis operation can't be undone.","Clear Results and Temporary files",JOptionPane.YES_NO_OPTION,JOptionPane.QUESTION_MESSAGE)) {
+				case 0:
+					clearData();
+					break;
+				case 1:
+					//No data deleted
+					break;
+			}
+		else
+			JOptionPane.showMessageDialog(this,"No old results or temporary files to be deleted.","Clear Results",JOptionPane.INFORMATION_MESSAGE);
+
+	}
+
+	private boolean checkOldData() {
+		File results = new File("results");
+		File gnuplot = new File("results/gnuplot");
+		File temp = new File("temp");
+		File xml = new File("xml");
+
+		return !((results.exists() ? results.listFiles().length : 1) == 1 &&
+				(gnuplot.exists() ? gnuplot.listFiles().length : 0) == 0 &&
+				(temp.exists() ? temp.listFiles().length : 0) == 0 &&
+				(xml.exists() ? xml.listFiles().length : 0) == 0);
+	}
+
+	private void clearData() {
+		File results = new File("results");
+		File gnuplot = new File("results/gnuplot");
+		File temp = new File("temp");
+		File xml = new File("xml");
+
+		if(results.exists())
+			for(File file : results.listFiles())
+				if(!file.isDirectory())
+					file.delete();
+		if(gnuplot.exists())
+			for(File file : gnuplot.listFiles())
+				file.delete();
+		if(temp.exists())
+			for(File file : temp.listFiles())
+				file.delete();
+		if(xml.exists())
+			for(File file : xml.listFiles())
+				file.delete();
+		System.out.println("Data cleared.");
 	}
 
 }

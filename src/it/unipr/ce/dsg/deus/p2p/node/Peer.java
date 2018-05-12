@@ -1,5 +1,6 @@
 package it.unipr.ce.dsg.deus.p2p.node;
 
+import it.unipr.ce.dsg.deus.core.Engine;
 import it.unipr.ce.dsg.deus.core.InvalidParamsException;
 import it.unipr.ce.dsg.deus.core.Node;
 import it.unipr.ce.dsg.deus.core.Resource;
@@ -41,8 +42,8 @@ public class Peer extends Node {
 
 	}
 
-	public Object clone() {
-		Peer clone = (Peer) super.clone();
+	public Object clone(Engine engine) {
+		Peer clone = (Peer) super.clone(engine);
 		clone.neighbors = new ArrayList<Peer>();
 		// clone.isReachable = false;
 		return clone;

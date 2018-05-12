@@ -1,18 +1,11 @@
 package it.unipr.ce.dsg.deus.automator;
 
+import it.unipr.ce.dsg.deus.automator.multithreading.SimMT;
 import it.unipr.ce.dsg.deus.core.Deus;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintStream;
-import java.io.StringWriter;
+import java.io.*;
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
@@ -50,8 +43,8 @@ import org.xml.sax.SAXException;
  * 
  * @author Marco Picone (picone.m@gmail.com)
  * @author Marco Pigoni
- * 
- * @author Stefano Sebastio (stefano.sebastio@imtlucca.it) [only Runner refactoring]
+ * @author Stefano Sebastio (stefano.sebastio@imtlucca.it) 
+ * @author Mirco Rosa (mirco.rosa.91@gmail.com) [multithreading]
  * 
  */
 public class Runner implements Runnable {
@@ -85,10 +78,9 @@ public class Runner implements Runnable {
     }
 	
     //To notify the simulation progress. Used (i.e., listened) by the RunnerGui
-	private void incNumFile(){
+	public void incNumFile(){
 		numFile++;
 		propertyChangeSupportNumSim.firePropertyChange("NumFileProperty" , (numFile-1), numFile);
-		//System.out.println("incNumFile");
 	}
 	
 	private static boolean DelDir2(File dir) {
@@ -143,7 +135,7 @@ public class Runner implements Runnable {
 
 		DelDir2(new File("./xml"));
 
-		// Create n XML files for the n simulations with DEUS
+		// Create n XML files freadxmlor the n simulations with DEUS
 		files = new ArrayList<String>();
 
 		// Insert in the ArrayList the names of the XML files to run
@@ -171,6 +163,20 @@ public class Runner implements Runnable {
 	}
 
 	/**
+	 * @author Mirco Rosa (mirco.rosa.91@gmail.com) [multithreading]
+	 * */
+	public void runSimulations(boolean multithreading) {
+		if(multithreading) {
+			System.out.println("Running with multithreading");
+			SimMT multithreadedSimulation = new SimMT(simulations,files,this,propertyChangeSupportNumSim);
+			multithreadedSimulation.runMultithreadedSimulations();
+		} else {
+			System.out.println("Running without multithreading");
+			runSimulations();
+		}
+	}
+
+	/**
 	 * 
 	 */
 	public void runSimulations() {
@@ -190,9 +196,9 @@ public class Runner implements Runnable {
 		// Run the n simulations with respective n files
 		for (int j = 0; j < simulations.size(); j++) {
 			for (int k = 0; k < simulations.get(j).getSimulationNumber(); k++) {
-				//System.out.println("k = " + k);
+//				System.out.println("k = " + k);
 				
-				//System.out.println("simulations.get(j).getSimulationNumberSeed() = " + simulations.get(j).getSimulationNumberSeed());
+//				System.out.println("simulations.get(j).getSimulationNumberSeed() = " + simulations.get(j).getSimulationNumberSeed());
 				
 				for (int i = 0; i < new Integer(simulations.get(j).getSimulationNumberSeed()); i++) {
 					//System.out.println("file " + files.get(numFile));
@@ -348,6 +354,7 @@ public class Runner implements Runnable {
 		//test function
 		//this.printSimulations(simulations);
 
+		//TODO Is this useless in multithreanding? Running without parametrization everything works fine
 		if (files.size() == 0) {
 			new Deus(originalXml, "deus_log");
 		}
@@ -358,14 +365,14 @@ public class Runner implements Runnable {
 	}
 
 	
-	
+
 	/**
 	 * 
 	 * Generate the supporting files for gnuPlot script
 	 * 
 	 * @author Stefano Sebastio 
 	 * 
-	 * @param sourceFile
+	 * //TODO readd this @param sourceFile
 	 * @param destinationFile
 	 * @param xLabel
 	 * @param yLabel
@@ -1155,6 +1162,10 @@ public class Runner implements Runnable {
 				ArrayList<ArrayList<MyObjectNode>> nodes2 = new ArrayList<ArrayList<MyObjectNode>>();
 				ArrayList<ArrayList<MyObjectProcess>> processes2 = new ArrayList<ArrayList<MyObjectProcess>>();
 
+				/* @author Mirco Rosa (mirco.rosa.91@gmail.com) [Event Parametrization] */
+				ArrayList<ArrayList<MyObjectEvent>> events2 = new ArrayList<ArrayList<MyObjectEvent>>();
+				////////////////
+
 				// Search all tag nodes
 				for (int s = 0; s < nodeLst.getLength(); s++) {
 
@@ -1490,6 +1501,131 @@ public class Runner implements Runnable {
 						sim.setSimulationNumber(new Integer(sim.getProcess()
 								.get(0).size()));
 
+				/* @author Mirco Rosa (mirco.rosa.91@gmail.com) [Event Parametrization] */
+				NodeList eventList = document.getElementsByTagName("event");
+
+				// Search all event tags
+				for (int s = 0; s < eventList.getLength(); s++) {
+
+					Node fstNode = eventList.item(s);
+
+					if (fstNode.getParentNode().equals(simulationLst.item(w))) {
+
+						ArrayList<MyObjectEvent> events = new ArrayList<MyObjectEvent>();
+
+						String messageType = fstNode.getAttributes()
+								.getNamedItem("id").getNodeValue();
+
+						Element fstElmnt = (Element) fstNode;
+						NodeList fstNmElmntLst = fstElmnt
+								.getElementsByTagName("paramName");
+
+						// Retrieve all params in event' ParamName
+						for (int j = 0; j < fstNmElmntLst.getLength(); j++) {
+
+							Element paramElement = (Element) fstNmElmntLst
+									.item(j);
+
+							String paramName = ((Node) fstNmElmntLst.item(j))
+									.getAttributes().getNamedItem("name")
+									.getNodeValue();
+
+							NodeList initialValue = paramElement
+									.getElementsByTagName("initialValue");
+
+							NodeList finalValue = paramElement
+									.getElementsByTagName("finalValue");
+
+							NodeList stepValue = paramElement
+									.getElementsByTagName("stepValue");
+
+							if (initialValue == null || finalValue == null
+									|| stepValue == null) {
+								throw new DeusAutomatorException(
+										"Errore in initalValue , finalValue e stepValue in "
+												+ simulationName
+												+ " di Event " + messageType
+												+ " in " + paramName);
+							}
+
+							ArrayList<Float> value = calculateParameters(
+									initialValue.item(0).getTextContent(),
+									finalValue.item(0).getTextContent(),
+									stepValue.item(0).getTextContent());
+
+							if (value.size() > 0)
+								sim.setStep(value.size());
+
+							if (Float.parseFloat(stepValue.item(0).getTextContent()) == 0.0) {
+								MyObjectParam param = new MyObjectParam();
+
+								param.setObjectParam("paramName");
+
+								param.setObjectName(paramName);
+
+								param.setObjectValue(Float.parseFloat(initialValue.item(0).getTextContent()));
+
+								MyObjectEvent eventToWrite = new MyObjectEvent();
+								eventToWrite.setObjectName(messageType);
+								eventToWrite.getObjectParam().add(param);
+
+								writeXmlEvent(eventToWrite);
+
+							}
+
+							if (numSim == 0)
+								numSim = value.size();
+
+							if (numSim != value.size()) {
+								throw new DeusAutomatorException(
+										"Errore nel numero di step in "
+												+ simulationName
+												+ " di Event " + messageType
+												+ " in " + paramName);
+							}
+
+							for (int k = 0; k < value.size(); k++) {
+								MyObjectParam param = new MyObjectParam();
+
+								param.setObjectParam("paramName");
+
+								param.setObjectName(paramName);
+
+								param.setObjectValue(value.get(k));
+
+								if (events.size() > k)
+									events.get(k).getObjectParam()
+											.add(param);
+
+								else {
+									MyObjectEvent event = new MyObjectEvent();
+									event.setObjectName(messageType);
+									event.getObjectParam().add(param);
+									events.add(event);
+								}
+
+							}
+
+						}
+						if (events.size() > 0)
+							events2.add(events);
+					}
+				}
+				if (events2.size() > 0)
+					sim.setEvent(events2);
+
+				numSim = 0;
+
+				if (sim.getSimulationNumber() == 0)
+					if (sim.getEvent().size() > 0)
+
+						sim.setSimulationNumber(new Integer(sim.getEvent()
+								.get(0).size()));
+				///////////////////////
+
+
+
+
 				NodeList engineLst = document.getElementsByTagName("engine");
 
 				// Search engine tags
@@ -1780,6 +1916,65 @@ public class Runner implements Runnable {
 
 	}
 
+	private void writeXmlEvent(MyObjectEvent eventToWrite) throws IOException, ParserConfigurationException, SAXException {
+
+		FileOutputStream fos = new FileOutputStream(originalXML + ".temp");
+
+		NodeList event = doc.getElementsByTagName("aut:event");
+		for (int i = 0; i < event.getLength(); i++) {
+			if (event.item(i).getAttributes().getNamedItem("id").getNodeValue().equals(eventToWrite.getObjectName())) {
+				for (int l = 0; l < eventToWrite.getObjectParam().size(); l++)
+					for (int m = 0; m < event.item(i).getChildNodes().getLength(); m++) {
+						if (event.item(i).getChildNodes().item(m).getNodeName().equals("aut:params"))
+							for (int b = 0; b < event.item(i).getChildNodes().item(m).getChildNodes().getLength(); b++)
+								if (event.item(i).getChildNodes().item(m).getChildNodes().item(b).getNodeName().equals("aut:param")) {
+									// System.out.println(event.item(i).getAttributes().getNamedItem("id").getNodeValue());
+									if (event.item(i).getChildNodes()
+											.item(m).getChildNodes()
+											.item(b).getAttributes()
+											.getNamedItem("name")
+											.getNodeValue()
+											.equals(eventToWrite
+													.getObjectParam()
+													.get(l)
+													.getObjectName())) {
+										event.item(i).getChildNodes()
+												.item(m).getChildNodes()
+												.item(b).getAttributes()
+												.getNamedItem("value")
+												.setNodeValue(
+														((Double) eventToWrite
+																.getObjectParam()
+																.get(l)
+																.getObjectValue())
+																.toString());
+									}
+								}
+					}
+
+			}
+		}
+
+		DOMSource domSource = new DOMSource(doc);
+		StringWriter writer = new StringWriter();
+		StreamResult result = new StreamResult(writer);
+		TransformerFactory tf = TransformerFactory.newInstance();
+		Transformer transformer;
+		try {
+			transformer = tf.newTransformer();
+			transformer.transform(domSource, result);
+		} catch (TransformerConfigurationException e) {
+			e.printStackTrace();
+		} catch (TransformerException e) {
+			e.printStackTrace();
+		}
+
+		fos.write(writer.toString().getBytes());
+
+		fos.close();
+
+	}
+
 	private void writeXmlNodeResource(MyObjectNode nodeToWrite)
 			throws IOException, ParserConfigurationException, SAXException {
 
@@ -1924,7 +2119,8 @@ public class Runner implements Runnable {
 				end = simulation.get(j).getStep();
 
 				if (simulation.get(j).getNode().size() > 0
-						|| simulation.get(j).getProcess().size() > 0)
+						|| simulation.get(j).getProcess().size() > 0
+						|| simulation.get(j).getEvent().size() > 0)
 					for (int k = 0; k < end; k++) {
 						simul.write(("\n"
 								+ simulation.get(j).getSimulationName() + "-"
@@ -2310,6 +2506,139 @@ public class Runner implements Runnable {
 							}
 						}
 
+
+						/* @author Mirco Rosa (mirco.rosa.91@gmail.com) [Event Parametrization] */
+						if (simulation.get(j).getEvent().size() > 0) {
+							// simul.write(("\n" +
+							// simulation.get(j).getSimulationName() + "-" + k +
+							// "\n").getBytes());
+							for (int g = 0; g < simulation.get(j).getEvent().size(); g++) {
+								NodeList event = doc.getElementsByTagName("aut:event");
+								for (int i = 0; i < event.getLength(); i++) {
+									if (simulation.get(j).getEvent().get(g).size() > 0)
+										if (event
+												.item(i)
+												.getAttributes()
+												.getNamedItem("id")
+												.getNodeValue()
+												.equals(simulation.get(j)
+														.getEvent().get(g)
+														.get(k).getObjectName())) {
+											simul.write(("Event : "
+													+ event.item(i)
+													.getAttributes()
+													.getNamedItem("id")
+													.getNodeValue() + "\n")
+													.getBytes());
+											for (int l = 0; l < simulation
+													.get(j).getEvent().get(g)
+													.get(k).getObjectParam()
+													.size(); l++)
+												for (int m = 0; m < event
+														.item(i)
+														.getChildNodes()
+														.getLength(); m++) {
+													if (event
+															.item(i)
+															.getChildNodes()
+															.item(m)
+															.getNodeName()
+															.equals("aut:params"))
+														for (int b = 0; b < event
+																.item(i)
+																.getChildNodes()
+																.item(m)
+																.getChildNodes()
+																.getLength(); b++)
+															if (event
+																	.item(i)
+																	.getChildNodes()
+																	.item(m)
+																	.getChildNodes()
+																	.item(b)
+																	.getNodeName()
+																	.equals("aut:param")) {
+																// System.out.
+																// println
+																// (event
+																// .item(i).
+																// getAttributes
+																// (
+																// ).getNamedItem
+																// ("id").
+																// getNodeValue
+																// ());
+																if (event
+																		.item(i)
+																		.getChildNodes()
+																		.item(m)
+																		.getChildNodes()
+																		.item(b)
+																		.getAttributes()
+																		.getNamedItem(
+																				"name")
+																		.getNodeValue()
+																		.equals(simulation
+																				.get(j)
+																				.getEvent()
+																				.get(g)
+																				.get(k)
+																				.getObjectParam()
+																				.get(l)
+																				.getObjectName())) {
+																	simul.write(("Parameter : "
+																			+ event
+																			.item(i)
+																			.getChildNodes()
+																			.item(m)
+																			.getChildNodes()
+																			.item(b)
+																			.getAttributes()
+																			.getNamedItem(
+																					"name")
+																			.getNodeValue() + " ")
+																			.getBytes());
+																	simul.write((((Double) simulation
+																			.get(j)
+																			.getEvent()
+																			.get(g)
+																			.get(k)
+																			.getObjectParam()
+																			.get(l)
+																			.getObjectValue())
+																			.toString() + "\n")
+																			.getBytes());
+																	event.item(
+																			i)
+																			.getChildNodes()
+																			.item(m)
+																			.getChildNodes()
+																			.item(b)
+																			.getAttributes()
+																			.getNamedItem(
+																					"value")
+																			.setNodeValue(
+																					((Double) simulation
+																							.get(j)
+																							.getEvent()
+																							.get(g)
+																							.get(k)
+																							.getObjectParam()
+																							.get(l)
+																							.getObjectValue())
+																							.toString());
+																}
+															}
+												}
+
+										}
+								}
+
+							}
+						}
+						/////////////////////////////
+
+
 						for (int seed = 0; seed < simulation.get(j).getEngine()
 								.get(j).getSeed().size(); seed++)
 
@@ -2372,7 +2701,8 @@ public class Runner implements Runnable {
 					}
 
 				if (simulation.get(j).getProcess().size() < 1
-						&& simulation.get(j).getNode().size() < 1)
+						&& simulation.get(j).getNode().size() < 1
+						&& simulation.get(j).getEvent().size() < 1)
 					for (int seed = 0; seed < simulation.get(j).getEngine()
 							.get(j).getSeed().size(); seed++) {
 						NodeList engine = doc

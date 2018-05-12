@@ -1,6 +1,5 @@
 package it.unipr.ce.dsg.deus.p2p.event;
 
-import it.unipr.ce.dsg.deus.core.Engine;
 import it.unipr.ce.dsg.deus.core.InvalidParamsException;
 import it.unipr.ce.dsg.deus.core.Node;
 import it.unipr.ce.dsg.deus.core.Event;
@@ -53,11 +52,11 @@ public class SingleConnectionEvent extends Event {
 			throw new RunException("The associated node is not a Peer!");
 		
 		if (target == null) {
-			if (Engine.getDefault().getNodes().size() > 1) {
+			if (this.engine.getNodes().size() > 1) {
 				do {
-					int randomInt = Engine.getDefault().getSimulationRandom().nextInt(
-							Engine.getDefault().getNodes().size());
-					Node n = Engine.getDefault().getNodes().get(randomInt);
+					int randomInt = this.engine.getSimulationRandom().nextInt(
+							this.engine.getNodes().size());
+					Node n = this.engine.getNodes().get(randomInt);
 					if (!(n instanceof Peer)) {
 						target = null;
 						continue;

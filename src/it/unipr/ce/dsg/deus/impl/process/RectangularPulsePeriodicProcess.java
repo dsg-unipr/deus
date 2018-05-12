@@ -3,7 +3,6 @@ package it.unipr.ce.dsg.deus.impl.process;
 import java.util.ArrayList;
 import java.util.Properties;
 
-import it.unipr.ce.dsg.deus.core.Engine;
 import it.unipr.ce.dsg.deus.core.Event;
 import it.unipr.ce.dsg.deus.core.InvalidParamsException;
 import it.unipr.ce.dsg.deus.core.Node;
@@ -96,7 +95,7 @@ public class RectangularPulsePeriodicProcess extends Process {
 		else if ((virtualTime >= startVtThreshold) && ((virtualTime + period) < stopVtThreshold))
 			return virtualTime + period;
 		else
-			return virtualTime + Engine.getDefault().getMaxVirtualTime(); // thus the event will not be executed
+			return virtualTime + event.getEngine().getMaxVirtualTime(); // thus the event will not be executed
 		
 		/*
 		if (virtualTime < startVtThreshold)

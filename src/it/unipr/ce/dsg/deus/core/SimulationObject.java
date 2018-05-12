@@ -1,7 +1,6 @@
 package it.unipr.ce.dsg.deus.core;
 
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Class used to abstract each simulation object, adding the member and methods
@@ -22,10 +21,12 @@ public class SimulationObject {
 	 * 
 	 * @return an instance of the logger.
 	 */
+	/*
 	public Logger getLogger() {
 		return Engine.getDefault().getLogger(this, loggerPathPrefix,
 				loggerLevel);
 	}
+	*/
 
 	/**
 	 * Sets the logger base path in which store log files.

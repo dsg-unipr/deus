@@ -1,6 +1,5 @@
 package it.unipr.ce.dsg.deus.automator;
 
-import it.unipr.ce.dsg.deus.core.Deus;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -23,11 +22,11 @@ public class AutomatorLogger {
 	 * constructor of the AutomatorLogger
 	 * @param 
 	 */
-	public AutomatorLogger() {
+	public AutomatorLogger(String logFileName) { 
 		super();			
 		 
 		try {				
-			this.file = new FileOutputStream(Deus.simulationLogName,true);
+			this.file = new FileOutputStream(logFileName,true);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}

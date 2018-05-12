@@ -1,6 +1,5 @@
 package it.unipr.ce.dsg.deus.p2p.event;
 
-import it.unipr.ce.dsg.deus.core.Engine;
 import it.unipr.ce.dsg.deus.core.InvalidParamsException;
 import it.unipr.ce.dsg.deus.core.Node;
 import it.unipr.ce.dsg.deus.core.Event;
@@ -52,19 +51,19 @@ public class MultipleRandomConnectionsEvent extends Event {
 	public void run() throws RunException {
 		if (!(associatedNode instanceof Peer))
 			throw new RunException("The associated node is not a Peer!");
-		int n = Engine.getDefault().getNodes().size();
+		int n = this.engine.getNodes().size();
 		if (n == 1)
 			return;
 		int m = 0;
 		if (n <= maxNumInitialConnections)
-			m = Engine.getDefault().getNodes().size() - 1;
+			m = this.engine.getNodes().size() - 1;
 		else
-			m = Engine.getDefault().getSimulationRandom().nextInt(maxNumInitialConnections+1);
+			m = this.engine.getSimulationRandom().nextInt(maxNumInitialConnections+1);
 		do {
 			Peer target = null;			
 			do {			
-				int randomInt = Engine.getDefault().getSimulationRandom().nextInt(n);
-				Node randomNode = Engine.getDefault().getNodes().get(randomInt);
+				int randomInt = this.engine.getSimulationRandom().nextInt(n);
+				Node randomNode = this.engine.getNodes().get(randomInt);
 				if (!(randomNode instanceof Peer)) {
 					target = null;					
 					continue;
