@@ -351,8 +351,6 @@ public class Runner implements Runnable {
 			}
 			//System.out.println("AverageFileList size " + averageFileList.size());
 		}
-		//test function
-		//this.printSimulations(simulations);
 
 		//TODO Is this useless in multithreanding? Running without parametrization everything works fine
 		if (files.size() == 0) {
@@ -372,7 +370,6 @@ public class Runner implements Runnable {
 	 * 
 	 * @author Stefano Sebastio 
 	 * 
-	 * //TODO readd this @param sourceFile
 	 * @param destinationFile
 	 * @param xLabel
 	 * @param yLabel

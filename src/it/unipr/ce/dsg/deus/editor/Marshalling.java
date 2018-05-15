@@ -20,7 +20,7 @@ import it.unipr.ce.dsg.deus.schema.Resource;
 import it.unipr.ce.dsg.deus.schema.Resources;
 
 import javax.swing.JOptionPane;
-import javax.xml.XMLConstants;
+//import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.JAXBContext;
