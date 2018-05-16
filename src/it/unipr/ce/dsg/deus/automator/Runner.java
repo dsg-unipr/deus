@@ -352,7 +352,6 @@ public class Runner implements Runnable {
 			//System.out.println("AverageFileList size " + averageFileList.size());
 		}
 
-		//TODO Is this useless in multithreanding? Running without parametrization everything works fine
 		if (files.size() == 0) {
 			new Deus(originalXml, "deus_log");
 		}
