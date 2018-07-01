@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<deusAutomator xmlns="http://dsg.ce.unipr.it/software/deus/schema/deusAutomator" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://dsg.ce.unipr.it/software/deus/schema/deusAutomator ../../schema/automator/deusAutomator.xsd">
+
+<simulation simulationNumberSeed="25" simulationName="RecursiveNetworks">
+
+<engine>
+	<seed>
+		<seedValue>1014378482</seedValue>
+		<seedValue>693896361</seedValue>
+		<seedValue>890664352</seedValue>
+		<seedValue>1479865517</seedValue>
+		<seedValue>612351519</seedValue>
+		<seedValue>1649429219</seedValue>
+		<seedValue>84029310</seedValue>
+		<seedValue>219010988</seedValue>
+		<seedValue>874454098</seedValue>
+		<seedValue>1760888825</seedValue>
+		<seedValue>492772219</seedValue>
+		<seedValue>1513466302</seedValue>
+		<seedValue>1946883643</seedValue>
+		<seedValue>2010053616</seedValue>
+		<seedValue>1422568653</seedValue>
+		<seedValue>1549945377</seedValue>
+		<seedValue>1087383036</seedValue>
+		<seedValue>1519619343</seedValue>
+		<seedValue>1400970413</seedValue>
+		<seedValue>968143688</seedValue>
+		<seedValue>1394616617</seedValue>
+		<seedValue>1961711189</seedValue>
+		<seedValue>1267935888</seedValue>
+		<seedValue>1802348344</seedValue>
+		<seedValue>522355440</seedValue>
+	</seed>
+</engine>
+
+<resultVT outputLogFile="./temp/micheleettismbp.homenet.telecomitalia.it-Simulation Name-logger"/>
+
+<resultXYFile fileName="PercKnownPeers" axisX="VT" axisY="perc-known-peers" />
+<resultXYFile fileName="PercVisitedPeers" axisX="VT" axisY="perc-visited-peers" />
+<resultXYFile fileName="PercSuccRoutOps" axisX="VT" axisY="perc-successful-routing-operations" />
+<resultXYFile fileName="AvgRouteLength" axisX="VT" axisY="avg-route-length" />
+<resultXYFile fileName="AvgInformation" axisX="VT" axisY="I-avg" />
+<resultXYFile fileName="AvgEmergence" axisX="VT" axisY="E-avg" />
+<resultXYFile fileName="AvgSelfOrganization" axisX="VT" axisY="S-avg" />
+<resultXYFile fileName="AvgComplexity" axisX="VT" axisY="C-avg" />
+<resultXYFile fileName="AvgHomeostasis" axisX="VT" axisY="H-avg" />
+
+</simulation>
+
+</deusAutomator>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<deusAutomator xmlns="http://dsg.ce.unipr.it/software/deus/schema/deusAutomator" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://dsg.ce.unipr.it/software/deus/schema/deusAutomator ../../schema/automator/deusAutomator.xsd">
+
+<simulation simulationNumberSeed="1" simulationName="RecursiveNetworks">
+
+<engine>
+	<seed>
+		<seedValue>1549945377</seedValue>
+	</seed>
+</engine>
+
+<resultVT outputLogFile="./temp/micheleettismbp.station-Simulation Name-logger"/>
+
+<resultXYFile fileName="PercKnownPeers" axisX="VT" axisY="perc-known-peers" />
+<resultXYFile fileName="PercVisitedPeers" axisX="VT" axisY="perc-visited-peers" />
+<resultXYFile fileName="PercSuccRoutOps" axisX="VT" axisY="perc-successful-routing-operations" />
+<resultXYFile fileName="AvgRouteLength" axisX="VT" axisY="avg-route-length" />
+<resultXYFile fileName="AvgInformation" axisX="VT" axisY="I-avg" />
+<resultXYFile fileName="AvgEmergence" axisX="VT" axisY="E-avg" />
+<resultXYFile fileName="AvgSelfOrganization" axisX="VT" axisY="S-avg" />
+<resultXYFile fileName="AvgComplexity" axisX="VT" axisY="C-avg" />
+<resultXYFile fileName="AvgHomeostasis" axisX="VT" axisY="H-avg" />
+
+</simulation>
+
+</deusAutomator>

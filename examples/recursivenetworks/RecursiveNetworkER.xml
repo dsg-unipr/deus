@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<aut:automator
+	xmlns:aut="http://dsg.ce.unipr.it/software/deus/schema/automator"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dsg.ce.unipr.it/software/deus/schema/automator ../../schema/automator.xsd ">
+
+
+	<!-- *** EVENTS *** -->
+
+	<aut:event id="birth" handler="it.unipr.ce.dsg.deus.impl.event.BirthEvent" 
+		schedulerListener="it.unipr.ce.dsg.deus.example.recursivenetworks.RecursiveNetworkBirthSchedulerListener" />
+
+	<aut:event id="connection" handler="it.unipr.ce.dsg.deus.example.recursivenetworks.ERTopologyBuilderEvent" oneShot="true" >
+		<aut:params>
+			<aut:param name="alpha" value="40" />
+		</aut:params>
+	</aut:event>
+	
+	<aut:event id="configuration" handler="it.unipr.ce.dsg.deus.example.recursivenetworks.RecursiveNetworkConfigurationEvent" oneShot="true" >
+		<aut:params>
+			<aut:param name="thirdLevel" value="true" />
+			<aut:param name="nohr" value="false" />
+			<aut:param name="maxRTSize" value="10" />
+		</aut:params>
+	</aut:event>
+	
+	<aut:event id="rtupdate" handler="it.unipr.ce.dsg.deus.example.recursivenetworks.RecursiveNetworkRTUpdateEvent" >
+		<aut:params>
+			<aut:param name="thirdLevel" value="false" />
+			<aut:param name="nohr" value="false" />
+			<aut:param name="deltaRTSize" value="10" />
+		</aut:params>
+	</aut:event>
+	
+ 	<aut:event id="exploration" handler="it.unipr.ce.dsg.deus.example.recursivenetworks.RecursiveNetworkExplorationEvent" oneShot="true" >
+ 		<aut:params>
+			<aut:param name="strategy" value="hr" /> <!-- "hr", "flooding" or "random" -->
+		</aut:params>
+	</aut:event>
+	
+	<aut:event id="logRecursiveNetworkStats" handler="it.unipr.ce.dsg.deus.example.recursivenetworks.LogRecursiveNetworkStatsEvent" />
+	
+	<aut:event id="routing" handler="it.unipr.ce.dsg.deus.example.recursivenetworks.RecursiveNetworkRoutingEvent" oneShot="true" >
+ 		<aut:params>
+			<aut:param name="max" value="100" />
+			<aut:param name="advanced" value="false" />
+			<aut:param name="nohr" value="false" />
+		</aut:params>
+	</aut:event>
+	
+	
+	<!-- *** NODE SPECIES *** -->
+
+	<aut:node id="recursiveNetworkNode" handler="it.unipr.ce.dsg.deus.example.recursivenetworks.RecursiveNetworkPeer" >
+		<aut:params>
+			<aut:param name="numSubnetworks" value="20" />
+		</aut:params>
+	</aut:node>
+
+
+	<!-- *** PROCESSES *** -->
+
+	<!-- with 1/lambda = 1000 and 1/lambda' = 1000000, we have E[N] = lambda/lambda' = 1000 -->
+
+	<aut:process id="rectpulseperiodic1" handler="it.unipr.ce.dsg.deus.impl.process.RectangularPulsePeriodicProcess">
+		<aut:params>
+			<aut:param name="period" value="1" />
+			<aut:param name="startVtThreshold" value="0" />
+			<aut:param name="stopVtThreshold" value="1000" />
+		</aut:params>
+		<aut:nodes>
+			<aut:reference id="recursiveNetworkNode" />
+		</aut:nodes>
+		<aut:events>
+			<aut:reference id="birth" />
+		</aut:events>
+	</aut:process>
+
+	<aut:process id="periodic0" handler="it.unipr.ce.dsg.deus.impl.process.PeriodicProcess">
+		<aut:params>
+			<aut:param name="period" value="1001" />
+		</aut:params>
+		<aut:nodes>
+			<aut:reference id="recursiveNetworkNode" />
+		</aut:nodes>
+		<aut:events>
+			<aut:reference id="connection" />
+		</aut:events>
+	</aut:process>
+	
+	<aut:process id="periodic1" handler="it.unipr.ce.dsg.deus.impl.process.PeriodicProcess">
+		<aut:params>
+			<aut:param name="period" value="2000" />
+		</aut:params>
+		<aut:nodes>
+			<aut:reference id="recursiveNetworkNode" />
+		</aut:nodes>
+		<aut:events>
+			<aut:reference id="configuration" />
+		</aut:events>
+	</aut:process>
+
+	<aut:process id="periodic2" handler="it.unipr.ce.dsg.deus.impl.process.PeriodicProcess">
+		<aut:params>
+			<aut:param name="period" value="3000" />
+		</aut:params>
+		<aut:nodes>
+			<aut:reference id="recursiveNetworkNode" />
+		</aut:nodes>
+		<aut:events>
+			<aut:reference id="exploration" />
+		</aut:events>
+	</aut:process>
+	
+	<aut:process id="periodic3" handler="it.unipr.ce.dsg.deus.impl.process.RectangularPulsePeriodicProcess">
+		<aut:params>
+			<aut:param name="period" value="1000" />
+			<aut:param name="startVtThreshold" value="0" />
+			<aut:param name="stopVtThreshold" value="15000" />
+		</aut:params>
+		<aut:events>
+			<aut:reference id="logRecursiveNetworkStats" />  
+		</aut:events>
+	</aut:process>
+
+	<aut:process id="periodic4" handler="it.unipr.ce.dsg.deus.impl.process.PeriodicProcess">
+		<aut:params>
+			<aut:param name="period" value="2100" />
+		</aut:params>
+		<aut:nodes>
+			<aut:reference id="recursiveNetworkNode" />
+		</aut:nodes>
+		<aut:events>
+			<aut:reference id="routing" />
+		</aut:events>
+	</aut:process>
+	
+	<aut:process id="periodic5" handler="it.unipr.ce.dsg.deus.impl.process.RectangularPulsePeriodicProcess">
+		<aut:params>
+			<aut:param name="period" value="1000" />
+			<aut:param name="startVtThreshold" value="2000" />
+			<aut:param name="stopVtThreshold" value="15000" />
+		</aut:params>
+		<aut:nodes>
+			<aut:reference id="recursiveNetworkNode" />
+		</aut:nodes>
+		<aut:events>
+			<aut:reference id="rtupdate" />
+		</aut:events>
+	</aut:process>
+	
+	<!-- *** SIMULATION *** -->
+
+	<aut:engine maxvt="15000" seed="123456789"> 
+		<aut:logger level="INFO" />
+		<aut:processes>
+			<aut:reference id="rectpulseperiodic1" />
+			<aut:reference id="periodic0" />
+			<aut:reference id="periodic1" /> 
+			<!-- aut:reference id="periodic2" / --> 
+			<aut:reference id="periodic3" />
+			<aut:reference id="periodic4" />
+			<aut:reference id="periodic5" />
+		</aut:processes>
+	</aut:engine>
+
+</aut:automator>
