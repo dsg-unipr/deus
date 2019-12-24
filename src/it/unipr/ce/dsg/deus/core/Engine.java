@@ -42,7 +42,6 @@ import java.util.logging.Logger;
  * 
  * @author Matteo Agosti
  * @author Michele Amoretti (michele.amoretti@unipr.it)
- * @author Mirco Rosa (mirco.rosa.91@gmail.com) [multithreading]
  * 
  */
 public class Engine extends SimulationObject {

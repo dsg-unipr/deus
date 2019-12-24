@@ -19,10 +19,6 @@ import java.io.*;
 //import java.util.Random;
 import java.util.concurrent.ArrayBlockingQueue;
 
-/**
- * @author Mirco Rosa (mirco.rosa.91@gmail.com) [multithreading]
- * */
-
 public class SimRunnable implements Runnable {
 
 	private String xmlName, logName;

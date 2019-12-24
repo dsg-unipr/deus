@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 /**
  * @author Marco Picone picone@ce.unipr.it
- * @author Mirco Rosa (mirco.rosa.91@gmail.com) [multithreading]
  *
  */
 public class MobilityPath {
@@ -26,7 +25,14 @@ public class MobilityPath {
 		
 		this.pathPoints = new ArrayList<MobilityPathPoint>();
 		this.lenght = 0.0;
+		
+		//Random select a speed limit
+		//TODO Fix static reference here and uncomment
+//		int randomCase =  Engine.getDefault().getSimulationRandom().nextInt(4);
 
+		/**
+		 * @author Mirco Rosa (mirco.rosa.91@gmail.com) [multithreading]
+		 * */
 		int randomCase = -1;
 		
 		switch (randomCase) {

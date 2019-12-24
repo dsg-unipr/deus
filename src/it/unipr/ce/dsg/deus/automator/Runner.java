@@ -43,8 +43,8 @@ import org.xml.sax.SAXException;
  * 
  * @author Marco Picone (picone.m@gmail.com)
  * @author Marco Pigoni
- * @author Stefano Sebastio (stefano.sebastio@imtlucca.it) 
- * @author Mirco Rosa (mirco.rosa.91@gmail.com) [multithreading]
+ * 
+ * @author Stefano Sebastio (stefano.sebastio@imtlucca.it) [only Runner refactoring]
  * 
  */
 public class Runner implements Runnable {
@@ -81,6 +81,7 @@ public class Runner implements Runnable {
 	public void incNumFile(){
 		numFile++;
 		propertyChangeSupportNumSim.firePropertyChange("NumFileProperty" , (numFile-1), numFile);
+		//System.out.println("incNumFile");
 	}
 	
 	private static boolean DelDir2(File dir) {
@@ -351,7 +352,10 @@ public class Runner implements Runnable {
 			}
 			//System.out.println("AverageFileList size " + averageFileList.size());
 		}
+		//test function
+		//this.printSimulations(simulations);
 
+		//TODO Is this useless in multithreanding? Running without parametrization everything works fine
 		if (files.size() == 0) {
 			new Deus(originalXml, "deus_log");
 		}
@@ -369,6 +373,7 @@ public class Runner implements Runnable {
 	 * 
 	 * @author Stefano Sebastio 
 	 * 
+	 * //TODO readd this @param sourceFile
 	 * @param destinationFile
 	 * @param xLabel
 	 * @param yLabel

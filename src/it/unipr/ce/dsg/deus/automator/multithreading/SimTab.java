@@ -5,10 +5,6 @@ import it.unipr.ce.dsg.deus.automator.MyObjectSimulation;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 
-/**
- * @author Mirco Rosa (mirco.rosa.91@gmail.com) [multithreading]
- * */
-
 public class SimTab {
 
 	private String simName;

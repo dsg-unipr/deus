@@ -13,10 +13,6 @@ import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author Mirco Rosa (mirco.rosa.91@gmail.com) [multithreading]
- * */
-
 public class GnuPlotWrapper {
 
 	private int[] coordinates;

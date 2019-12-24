@@ -1,5 +1,6 @@
 package it.unipr.ce.dsg.deus.automator;
 
+import it.unipr.ce.dsg.deus.core.Deus;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -22,7 +23,7 @@ public class AutomatorLogger {
 	 * constructor of the AutomatorLogger
 	 * @param 
 	 */
-	public AutomatorLogger(String logFileName) { 
+	public AutomatorLogger(String logFileName) { //TODO Edited
 		super();			
 		 
 		try {				

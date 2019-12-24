@@ -1,6 +1,7 @@
 package it.unipr.ce.dsg.deus.automator.gui;
 
 import it.unipr.ce.dsg.deus.automator.DeusAutomatorException;
+import it.unipr.ce.dsg.deus.automator.Runner;
 import it.unipr.ce.dsg.deus.automator.RunnerGui;
 
 import java.awt.BorderLayout;
@@ -12,6 +13,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.*;
 import javax.xml.bind.JAXBContext;

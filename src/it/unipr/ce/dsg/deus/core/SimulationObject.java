@@ -1,6 +1,7 @@
 package it.unipr.ce.dsg.deus.core;
 
 import java.util.logging.Level;
+//import java.util.logging.Logger;
 
 /**
  * Class used to abstract each simulation object, adding the member and methods

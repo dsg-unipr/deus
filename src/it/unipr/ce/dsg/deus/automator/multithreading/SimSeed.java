@@ -7,10 +7,6 @@ import java.io.File;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ExecutorService;
 
-/**
- * @author Mirco Rosa (mirco.rosa.91@gmail.com) [multithreading]
- * */
-
 public class SimSeed {
 
 	private MyObjectSimulation simulation;
