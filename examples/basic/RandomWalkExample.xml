@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<aut:automator
+	xmlns:aut="http://dsg.ce.unipr.it/software/deus/schema/automator"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dsg.ce.unipr.it/software/deus/schema/automator automator.xsd ">
+
+
+	<!-- *** EVENTS *** -->
+
+	<aut:event id="birth" handler="it.unipr.ce.dsg.deus.impl.event.BirthEvent"
+	 schedulerListener="it.unipr.ce.dsg.deus.example.basic.BirthSchedulerListener"><!-- when scheduled, creates a new node -->
+		<aut:params>
+			<aut:param name="hasSameAssociatedNode" value="false" />
+		</aut:params>
+		<aut:events><!-- events to be scheduled on created node -->
+		    <aut:reference id="connection" />
+		</aut:events>
+	</aut:event>
+
+	<aut:event id="connection" handler="it.unipr.ce.dsg.deus.p2p.event.SingleConnectionEvent" schedulerListener="it.unipr.ce.dsg.deus.example.basic.SingleConnectionSchedulerListener" oneShot="true" >
+		<aut:params>
+			<aut:param name="isBidirectional" value="true" />
+			<aut:param name="hasSameAssociatedNode" value="false" />
+		</aut:params>
+	</aut:event>	
+	
+	<aut:event id="randomwalk" handler="it.unipr.ce.dsg.deus.example.basic.RandomWalkEvent" oneShot="false" >
+		<aut:params>
+			<aut:param name="hasSameAssociatedNode" value="false" />
+		</aut:params>
+	</aut:event>
+
+	<aut:event id="logPopulationSize" handler="it.unipr.ce.dsg.deus.impl.event.LogPopulationSizeEvent" />
+
+	<aut:event id="logNodeDegree" handler="it.unipr.ce.dsg.deus.p2p.event.LogNodeDegreeEvent">
+		<aut:params>
+			<aut:param name="kMax" value="50" />
+		</aut:params>
+	</aut:event>
+
+
+	<!-- *** NODE SPECIES *** -->
+
+	<aut:node id="supernode" handler="it.unipr.ce.dsg.deus.p2p.node.Peer" />
+
+	<!-- *** PROCESSES *** -->
+
+	<!-- with 1/lambda = 50 and 1/lambda' = 20000, we have E[N] = 400 -->
+
+	<aut:process id="periodic1" handler="it.unipr.ce.dsg.deus.impl.process.RectangularPulsePeriodicProcess">
+		<aut:params>
+			<aut:param name="period" value="1" />
+			<aut:param name="startVtThreshold" value="0" />
+			<aut:param name="stopVtThreshold" value="1000" />
+		</aut:params>
+		<aut:nodes>
+			<aut:reference id="supernode" />
+		</aut:nodes>
+		<aut:events>
+			<aut:reference id="birth" />
+		</aut:events>
+	</aut:process>
+	
+	<aut:process id="periodic2" handler="it.unipr.ce.dsg.deus.impl.process.PeriodicProcess">
+		<aut:params>
+			<aut:param name="period" value="0" />
+		</aut:params>
+		<aut:nodes>
+			<aut:reference id="supernode" />
+		</aut:nodes>
+		<aut:events>
+			<aut:reference id="connection" />
+		</aut:events>
+	</aut:process>
+	
+	<aut:process id="poisson1" handler="it.unipr.ce.dsg.deus.impl.process.RectangularPulsePoissonProcess">
+		<aut:params>
+			<aut:param name="meanArrival" value="1000" />
+			<aut:param name="startVtThreshold" value="2000" />
+			<aut:param name="stopVtThreshold" value="15000" />
+		</aut:params>
+		<aut:nodes>
+			<aut:reference id="supernode" />
+		</aut:nodes>
+		<aut:events>
+			<aut:reference id="randomwalk" />
+		</aut:events>
+	</aut:process>
+	
+	<aut:process id="periodic3" handler="it.unipr.ce.dsg.deus.impl.process.PeriodicProcess">
+		<aut:params>
+			<aut:param name="period" value="2500" />
+		</aut:params>
+		<aut:events>
+		    <!-- aut:reference id="logPopulationSize" / -->
+			<aut:reference id="logNodeDegree" />
+		</aut:events>
+	</aut:process>
+
+	<!-- *** SIMULATION *** -->
+
+	<aut:engine maxvt="4000" seed="123456789">
+		<aut:logger level="ALL"/>
+		<aut:processes>
+			<aut:reference id="periodic1" />
+			<aut:reference id="poisson1" />
+			<aut:reference id="periodic3" />
+		</aut:processes>
+	</aut:engine>
+
+</aut:automator>
